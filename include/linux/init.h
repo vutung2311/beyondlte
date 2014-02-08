@@ -153,6 +153,23 @@ extern bool initcall_debug;
 
 #ifndef __ASSEMBLY__
 
+#ifdef CONFIG_LTO_GCC
+/* Work around a LTO gcc problem: when there is no reference to a variable
+ * in a module it will be moved to the end of the program. This causes
+ * reordering of initcalls which the kernel does not like.
+ * Add a dummy reference function to avoid this. The function is
+ * deleted by the linker.
+ */
+#define LTO_REFERENCE_INITCALL(x) \
+	; /* yes this is needed */			\
+	static __used __exit void *reference_##x(void)	\
+	{						\
+		return &x;				\
+	}
+#else
+#define LTO_REFERENCE_INITCALL(x)
+#endif
+
 /*
  * initcalls are now grouped by functionality into separate
  * subsections. Ordering inside the subsections is determined
@@ -192,7 +209,8 @@ extern bool initcall_debug;
 #else
   #define ___define_initcall(fn, id, __sec) \
 	static initcall_t __initcall_##fn##id __used __noreorder \
-		__attribute__((__section__(#__sec ".init"))) = fn;
+		__attribute__((__section__(#__sec ".init"))) = fn; \
+		LTO_REFERENCE_INITCALL(__initcall_##fn##id)
 #endif
 
 #define __define_initcall(fn, id) ___define_initcall(fn, id, .initcall##id)
