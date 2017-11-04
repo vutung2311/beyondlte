@@ -30,6 +30,18 @@ DTB_LIST := $(dtb-y) $(dtbo-y)
 endif
 DTB_OBJS := $(addprefix $(obj)/dts/,$(DTB_LIST))
 
+targets += dtb.img dtbo.img
+
+DTB_CFG := $(shell find -L $(obj)/dts/ -name dtb.img.cfg)
+
+DTBO_CFG := $(shell find -L $(obj)/dts/ -name dtbo.img.cfg)
+
+$(obj)/dtb.img: $(DTB_CFG) FORCE
+	$(call if_changed,dtbtool_exynos)
+
+$(obj)/dtbo.img: $(DTBO_CFG) FORCE
+	$(call if_changed,dtbtool_exynos)
+
 $(obj)/Image: vmlinux FORCE
 	$(call if_changed,objcopy)
 
