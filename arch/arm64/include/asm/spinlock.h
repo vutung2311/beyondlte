@@ -29,10 +29,10 @@
 
 /* Please try to use LSE Atomics unless you are sure LL/SC is safe. */
 #ifdef CONFIG_SEC_ARM64_LSE_SPINLOCK
-#define SEC_ARM64_LSE_ATOMIC_INSN(llsc, lse)	lse
+#define SEC_ARM64_LSE_ATOMIC_INSN(llsc, lse)	__LSE_PREAMBLE lse
 #else
 #define SEC_ARM64_LSE_ATOMIC_INSN(llsc, lse)				\
-	ARM64_LSE_ATOMIC_INSN(llsc, lse)
+	ARM64_LSE_ATOMIC_INSN(llsc, __LSE_PREAMBLE lse)
 #endif	/* CONFIG_SEC_ARM64_LSE_SPINLOCK */
 
 #define arch_spin_lock_flags(lock, flags) arch_spin_lock(lock)
