@@ -60,7 +60,11 @@ FUNC_BUILD_KERNEL()
 			echo "Enable LTO_CLANG"
 			echo ""
 			./scripts/config \
+			-d LTO_NONE \
 			-e LTO_CLANG \
+			-e CFI_CLANG \
+			-e CFI_PERMISSIVE \
+			-e CFI_CLANG_SHADOW \
 			-d ARM64_ERRATUM_843419 \
 			-d MODVERSIONS
 			OUTPUT_ZIP=${OUTPUT_ZIP}".lto"
