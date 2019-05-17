@@ -239,6 +239,7 @@ int misc_register(struct miscdevice *misc)
 	mutex_unlock(&misc_mtx);
 	return err;
 }
+EXPORT_SYMBOL(misc_register);
 
 /**
  *	misc_deregister - unregister a miscellaneous device
@@ -262,8 +263,6 @@ void misc_deregister(struct miscdevice *misc)
 		clear_bit(i, misc_minors);
 	mutex_unlock(&misc_mtx);
 }
-
-EXPORT_SYMBOL(misc_register);
 EXPORT_SYMBOL(misc_deregister);
 
 static char *misc_devnode(struct device *dev, umode_t *mode)
