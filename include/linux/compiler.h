@@ -272,6 +272,16 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
 
 #endif /* __KERNEL__ */
 
+/*
+ * Force the compiler to emit 'sym' as a symbol, so that we can reference
+ * it from inline assembler. Necessary in case 'sym' could be inlined
+ * otherwise, or eliminated entirely due to lack of references that are
+ * visible to the compiler.
+ */
+#define __ADDRESSABLE(sym) \
+	static void * __section(.discard.addressable) __used \
+		__PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
+
 #endif /* __ASSEMBLY__ */
 
 #ifndef __optimize

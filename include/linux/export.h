@@ -60,17 +60,46 @@ extern struct module __this_module;
 #define __CRC_SYMBOL(sym, sec)
 #endif
 
+#ifdef CONFIG_CFI_CLANG
+#include <linux/compiler.h>
+/*
+ * With -fno-sanitize-cfi-canonical-jump-tables, the compiler replaces
+ * references to functions with jump table addresses. Use inline assembly
+ * to emit ksymtab entries that point to the actual function instead.
+ */
+#define ___KSYMTAB_ENTRY(sym, sec, size)				\
+	__ADDRESSABLE(sym)						\
+	asm("	.section \"___ksymtab" sec "+" #sym "\", \"a\"	\n"	\
+	    "	.balign " #size "				\n"	\
+	    "__ksymtab_" #sym ":				\n"	\
+	    "	." #size "byte	" #sym "			\n"	\
+	    "	." #size "byte	__kstrtab_" #sym "		\n"	\
+	    "	.previous					\n")
+
+#ifdef CONFIG_64BIT
+#define __KSYMTAB_ENTRY(sym, sec)	___KSYMTAB_ENTRY(sym, sec, 8)
+#else
+#define __KSYMTAB_ENTRY(sym, sec)	___KSYMTAB_ENTRY(sym, sec, 4)
+#endif
+
+#else /* !CONFIG_CFI_CLANG */
+
+#define __KSYMTAB_ENTRY(sym, sec)					\
+	static const struct kernel_symbol __ksymtab_##sym		\
+	__attribute__((section("___ksymtab" sec "+" #sym), used))	\
+	__aligned(sizeof(void *))					\
+	= { (unsigned long)&sym, __kstrtab_##sym }
+
+#endif
+
 /* For every exported symbol, place a struct in the __ksymtab section */
 #define ___EXPORT_SYMBOL(sym, sec)					\
 	extern typeof(sym) sym;						\
 	__CRC_SYMBOL(sym, sec)						\
-	static const char __kstrtab_##sym[]				\
+	static const char __kstrtab_##sym[]  __used			\
 	__attribute__((section("__ksymtab_strings"), aligned(1)))	\
 	= VMLINUX_SYMBOL_STR(sym);					\
-	static const struct kernel_symbol __ksymtab_##sym		\
-	__used								\
-	__attribute__((section("___ksymtab" sec "+" #sym), used))	\
-	= { (unsigned long)&sym, __kstrtab_##sym }
+	__KSYMTAB_ENTRY(sym, sec)
 
 #if defined(__KSYM_DEPS__)
 
