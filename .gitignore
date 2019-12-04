@@ -100,6 +100,7 @@ ID
 *.orig
 *~
 \#*#
+-.*
 
 #
 # Leavings from module signing
