@@ -1525,7 +1525,7 @@ int decon_register_hiber_work(struct decon_device *decon)
 		decon_err("failed to run hibernation thread\n");
 		return PTR_ERR(decon->hiber.thread);
 	}
-	param.sched_priority = 20;
+	param.sched_priority = 4;
 	sched_setscheduler_nocheck(decon->hiber.thread, SCHED_FIFO, &param);
 
 	decon->hiber.hiber_enter_cnt = DECON_ENTER_HIBER_CNT;
@@ -1588,7 +1588,7 @@ int decon_register_hiber_work(struct decon_device *decon)
 		decon_err("failed to run hibernation thread\n");
 		return PTR_ERR(decon->hiber.thread);
 	}
-	param.sched_priority = 20;
+	param.sched_priority = 4;
 	sched_setscheduler_nocheck(decon->hiber.thread, SCHED_FIFO, &param);
 	kthread_init_work(&decon->hiber.work, decon_hiber_handler);
 
@@ -1699,7 +1699,7 @@ int decon_register_doze_hiber_work(struct decon_device *decon)
 		decon_err("failed to run doze_suspend thread\n");
 		return PTR_ERR(decon->doze_hiber.doze_suspend_thread);
 	}
-	param.sched_priority = 20;
+	param.sched_priority = 4;
 	sched_setscheduler_nocheck(decon->doze_hiber.doze_suspend_thread, SCHED_FIFO, &param);
 
 	/* enter doze wake thread */
@@ -1710,7 +1710,7 @@ int decon_register_doze_hiber_work(struct decon_device *decon)
 		decon_err("failed to run doze_wake thread\n");
 		return PTR_ERR(decon->doze_hiber.doze_wake_thread);
 	}
-	param.sched_priority = 20;
+	param.sched_priority = 4;
 	sched_setscheduler_nocheck(decon->doze_hiber.doze_wake_thread, SCHED_FIFO, &param);
 
 	decon->doze_hiber.enabled = true;

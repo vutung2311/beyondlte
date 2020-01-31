@@ -4288,7 +4288,7 @@ static int decon_create_update_thread(struct decon_device *decon, char *name)
 		PROFILER_SET_PID, &decon->systrace.pid);
 #endif
 
-	param.sched_priority = 20;
+	param.sched_priority = 4;
 	sched_setscheduler_nocheck(decon->up.thread, SCHED_FIFO, &param);
 	kthread_init_work(&decon->up.work, decon_update_regs_handler);
 
