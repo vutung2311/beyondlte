@@ -352,7 +352,7 @@ int sec_ts_i2c_write(struct sec_ts_data *ts, u8 reg, u8 *data, int len)
 	msg.len = len + 1;
 	msg.buf = buf;
 
-	mutex_lock(&ts->i2c_mutex);
+	rt_mutex_lock(&ts->i2c_mutex);
 	for (retry = 0; retry < SEC_TS_I2C_RETRY_CNT; retry++) {
 		ret = i2c_transfer(ts->client->adapter, &msg, 1);
 		if (ret == 1)
@@ -360,7 +360,7 @@ int sec_ts_i2c_write(struct sec_ts_data *ts, u8 reg, u8 *data, int len)
 
 		if (ts->power_status == SEC_TS_STATE_POWER_OFF) {
 			input_err(true, &ts->client->dev, "%s: POWER_STATUS : OFF, retry:%d\n", __func__, retry);
-			mutex_unlock(&ts->i2c_mutex);
+			rt_mutex_unlock(&ts->i2c_mutex);
 			goto err;
 		}
 
@@ -378,7 +378,7 @@ int sec_ts_i2c_write(struct sec_ts_data *ts, u8 reg, u8 *data, int len)
 		}
 	}
 
-	mutex_unlock(&ts->i2c_mutex);
+	rt_mutex_unlock(&ts->i2c_mutex);
 
 	if (retry == SEC_TS_I2C_RETRY_CNT) {
 		input_err(true, &ts->client->dev, "%s: I2C write over retry limit\n", __func__);
@@ -460,7 +460,7 @@ int sec_ts_i2c_read(struct sec_ts_data *ts, u8 reg, u8 *data, int len)
 	msg[1].flags = I2C_M_RD;
 	msg[1].buf = buff;
 
-	mutex_lock(&ts->i2c_mutex);
+	rt_mutex_lock(&ts->i2c_mutex);
 	if (len <= ts->i2c_burstmax) {
 		msg[1].len = len;
 		for (retry = 0; retry < SEC_TS_I2C_RETRY_CNT; retry++) {
@@ -470,7 +470,7 @@ int sec_ts_i2c_read(struct sec_ts_data *ts, u8 reg, u8 *data, int len)
 			usleep_range(1 * 1000, 1 * 1000);
 			if (ts->power_status == SEC_TS_STATE_POWER_OFF) {
 				input_err(true, &ts->client->dev, "%s: POWER_STATUS : OFF, retry:%d\n", __func__, retry);
-				mutex_unlock(&ts->i2c_mutex);
+				rt_mutex_unlock(&ts->i2c_mutex);
 				goto err;
 			}
 
@@ -498,7 +498,7 @@ int sec_ts_i2c_read(struct sec_ts_data *ts, u8 reg, u8 *data, int len)
 			usleep_range(1 * 1000, 1 * 1000);
 			if (ts->power_status == SEC_TS_STATE_POWER_OFF) {
 				input_err(true, &ts->client->dev, "%s: POWER_STATUS : OFF, retry:%d\n", __func__, retry);
-				mutex_unlock(&ts->i2c_mutex);
+				rt_mutex_unlock(&ts->i2c_mutex);
 				goto err;
 			}
 
@@ -524,7 +524,7 @@ int sec_ts_i2c_read(struct sec_ts_data *ts, u8 reg, u8 *data, int len)
 				usleep_range(1 * 1000, 1 * 1000);
 				if (ts->power_status == SEC_TS_STATE_POWER_OFF) {
 					input_err(true, &ts->client->dev, "%s: POWER_STATUS : OFF, retry:%d\n", __func__, retry);
-					mutex_unlock(&ts->i2c_mutex);
+					rt_mutex_unlock(&ts->i2c_mutex);
 					goto err;
 				}
 
@@ -538,7 +538,7 @@ int sec_ts_i2c_read(struct sec_ts_data *ts, u8 reg, u8 *data, int len)
 		} while (remain > 0);
 	}
 
-	mutex_unlock(&ts->i2c_mutex);
+	rt_mutex_unlock(&ts->i2c_mutex);
 
 	if (retry == SEC_TS_I2C_RETRY_CNT) {
 		input_err(true, &ts->client->dev, "%s: I2C read over retry limit\n", __func__);
@@ -603,7 +603,7 @@ static int sec_ts_i2c_write_burst(struct sec_ts_data *ts, u8 *data, int len)
 		return -ENOMEM;
 
 	memcpy(buf, data, len);
-	mutex_lock(&ts->i2c_mutex);
+	rt_mutex_lock(&ts->i2c_mutex);
 
 	for (retry = 0; retry < SEC_TS_I2C_RETRY_CNT; retry++) {
 		ret = i2c_master_send(ts->client, buf , len);
@@ -618,7 +618,7 @@ static int sec_ts_i2c_write_burst(struct sec_ts_data *ts, u8 *data, int len)
 		}
 	}
 
-	mutex_unlock(&ts->i2c_mutex);
+	rt_mutex_unlock(&ts->i2c_mutex);
 	if (retry == SEC_TS_I2C_RETRY_CNT) {
 		input_err(true, &ts->client->dev, "%s: I2C write over retry limit\n", __func__);
 		ret = -EIO;
@@ -664,7 +664,7 @@ static int sec_ts_i2c_read_bulk(struct sec_ts_data *ts, u8 *data, int len)
 	msg.flags = I2C_M_RD;
 	msg.buf = buff;
 
-	mutex_lock(&ts->i2c_mutex);
+	rt_mutex_lock(&ts->i2c_mutex);
 
 	do {
 		if (remain > ts->i2c_burstmax)
@@ -696,7 +696,7 @@ static int sec_ts_i2c_read_bulk(struct sec_ts_data *ts, u8 *data, int len)
 		msg.buf += msg.len;
 	} while (remain > 0);
 
-	mutex_unlock(&ts->i2c_mutex);
+	rt_mutex_unlock(&ts->i2c_mutex);
 
 	if (ret == 1) {
 		memcpy(data, buff, len);
@@ -2686,7 +2686,7 @@ static int sec_ts_probe(struct i2c_client *client, const struct i2c_device_id *i
 	ts->sec_ts_write_sponge = sec_ts_write_to_sponge;
 
 	mutex_init(&ts->device_mutex);
-	mutex_init(&ts->i2c_mutex);
+	rt_mutex_init(&ts->i2c_mutex);
 	mutex_init(&ts->eventlock);
 	mutex_init(&ts->modechange);
 	mutex_init(&ts->sponge_mutex);
