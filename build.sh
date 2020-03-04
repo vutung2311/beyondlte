@@ -19,7 +19,7 @@ BUILD_LDLTO=$CLANG_BIN_PATH/ld.lld
 BUILD_JOB_NUMBER="$(nproc)"
 # BUILD_JOB_NUMBER=1
 
-OUTPUT_ZIP="g970f_kernel.p"
+OUTPUT_ZIP="g970f_kernel"
 RDIR="$(pwd)"
 
 KERNEL_DEFCONFIG=exynos9820-beyond0lte_defconfig
@@ -106,6 +106,8 @@ rm -rf ./build.log
 	START_TIME=`date +%s`
 
 	FUNC_BUILD_KERNEL "$@"
+	FUNC_BUILD_RAMDISK
+	FUNC_BUILD_ZIP
 
 	END_TIME=`date +%s`
 

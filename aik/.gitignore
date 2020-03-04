@@ -1,3 +1,4 @@
 image-new.img
 unsigned-new.img
 split_img/boot.img-zImage
+ramdisk-new.cpio.empty
