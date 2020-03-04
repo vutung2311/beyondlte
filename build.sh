@@ -88,10 +88,7 @@ FUNC_BUILD_KERNEL()
 FUNC_BUILD_RAMDISK()
 {
 	cp ${RDIR}/arch/${ARCH}/boot/Image ${RDIR}/aik/split_img/boot.img-zImage
-	cp ${RDIR}/arch/${ARCH}/boot/dtb.img ${RDIR}/aik/split_img/boot.img-dtb
-	find ${RDIR} -name "*.ko" -not -path "*/aik/ramdisk/*" -exec mv -f {} ${RDIR}/aik/ramdisk/lib/modules/ \;
 	cd ${RDIR}/aik
-	./fixperm.sh
 	./repackimg.sh
 }
 
@@ -99,6 +96,7 @@ FUNC_BUILD_ZIP()
 {
 	cd ${RDIR}/out/
 	cp ${RDIR}/aik/image-new.img ${RDIR}/out/boot.img
+	find ${RDIR} -name "*.ko" -not -path "*/out/*" -exec cp -f {} ${RDIR}/out/system/lib/modules/ \;
 	cd ${RDIR}/out/ && zip ../${OUTPUT_ZIP}.zip -r *
 }
 
