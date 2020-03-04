@@ -96,6 +96,7 @@ FUNC_BUILD_ZIP()
 {
 	cd ${RDIR}/out/
 	cp ${RDIR}/aik/image-new.img ${RDIR}/out/boot.img
+	rm -f "${RDIR}/out/system/lib/modules/*.ko"
 	find ${RDIR} -name "*.ko" -not -path "*/out/*" -exec cp -f {} ${RDIR}/out/system/lib/modules/ \;
 	cd ${RDIR}/out/ && zip ../${OUTPUT_ZIP}.zip -r *
 }
