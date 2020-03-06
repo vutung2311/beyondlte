@@ -89,13 +89,15 @@ FUNC_BUILD_RAMDISK()
 {
 	cp ${RDIR}/arch/${ARCH}/boot/Image ${RDIR}/aik/split_img/boot.img-zImage
 	cd ${RDIR}/aik
-	./repackimg.sh
+	./repackimg.sh --nosudo
 }
 
 FUNC_BUILD_ZIP()
 {
 	cd ${RDIR}/out/
 	cp ${RDIR}/aik/image-new.img ${RDIR}/out/boot.img
+	cp ${RDIR}/arch/arm64/boot/dtb.img ${RDIR}/out/dtb.img
+	cp ${RDIR}/arch/arm64/boot/dtbo.img ${RDIR}/out/dtbo.img
 	rm -f "${RDIR}/out/system/lib/modules/*.ko"
 	find ${RDIR} -name "*.ko" -not -path "*/out/*" -exec cp -f {} ${RDIR}/out/system/lib/modules/ \;
 	cd ${RDIR}/out/ && zip ../${OUTPUT_ZIP}.zip -r *

@@ -19,14 +19,20 @@ resolve_link() {
   echo $VAR
 }
 
-rm -rf /tmp/starlte
-mkdir -p /tmp/starlte
-cd /tmp/starlte
+rm -rf /tmp/beyondlte
+mkdir -p /tmp/beyondlte
+cd /tmp/beyondlte
 unzip -o "$ZIP"
 
 ui_print " - flashing kernel"
 BOOT=$(resolve_link $(find /dev/block/platform -type l -iname boot))
 dd if=boot.img of="$BOOT"
+DTB=$(resolve_link $(find /dev/block/platform -type l -iname dtb))
+ui_print " - flashing dtb"
+dd if=dtb.img of="$DTB"
+ui_print " - flashing dtbo"
+DTBO=$(resolve_link $(find /dev/block/platform -type l -iname dtbo))
+dd if=dtbo.img of="$DTBO"
 
 ui_print " "
 ui_print "finished"
