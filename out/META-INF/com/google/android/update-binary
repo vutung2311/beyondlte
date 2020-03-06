@@ -3,6 +3,8 @@
 OUTFD=$2
 ZIP=$3
 
+set -xe
+
 ui_print() {
   echo -n -e "ui_print $1\n" > /proc/self/fd/$OUTFD
   echo -n -e "ui_print\n" > /proc/self/fd/$OUTFD
@@ -25,13 +27,13 @@ cd /tmp/beyondlte
 unzip -o "$ZIP"
 
 ui_print " - flashing kernel"
-BOOT=$(resolve_link $(find /dev/block/platform -type l -iname boot))
+BOOT=$(resolve_link $(find /dev/block/platform -type l -name boot))
 dd if=boot.img of="$BOOT"
-DTB=$(resolve_link $(find /dev/block/platform -type l -iname dtb))
+DTB=$(resolve_link $(find /dev/block/platform -type l -name dtb))
 ui_print " - flashing dtb"
 dd if=dtb.img of="$DTB"
 ui_print " - flashing dtbo"
-DTBO=$(resolve_link $(find /dev/block/platform -type l -iname dtbo))
+DTBO=$(resolve_link $(find /dev/block/platform -type l -name dtbo))
 dd if=dtbo.img of="$DTBO"
 
 ui_print " "
