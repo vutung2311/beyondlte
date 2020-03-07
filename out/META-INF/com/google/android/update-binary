@@ -29,12 +29,12 @@ unzip -o "$ZIP"
 ui_print " - flashing kernel"
 BOOT=$(resolve_link $(find /dev/block/platform -type l -name boot))
 dd if=boot.img of="$BOOT"
-# DTB=$(resolve_link $(find /dev/block/platform -type l -name dtb))
-# ui_print " - flashing dtb"
-# dd if=dtb.img of="$DTB"
-# ui_print " - flashing dtbo"
-# DTBO=$(resolve_link $(find /dev/block/platform -type l -name dtbo))
-# dd if=dtbo.img of="$DTBO"
+DTB=$(resolve_link $(find /dev/block/platform -type l -name dtb))
+ui_print " - flashing dtb"
+dd if=dtb.img of="$DTB"
+ui_print " - flashing dtbo"
+DTBO=$(resolve_link $(find /dev/block/platform -type l -name dtbo))
+dd if=dtbo.img of="$DTBO"
 
 ui_print " "
 ui_print "finished"
