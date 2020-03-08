@@ -7,7 +7,7 @@ export PLATFORM_VERSION=10.0.0
 export KBUILD_COMPILER_STRING="LLVM Clang 9.0"
 
 GCC_BIN_PATH=$HOME/Toolchain/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin
-CLANG_BIN_PATH=/usr/lib/llvm-10/bin/
+CLANG_BIN_PATH=/usr/lib/llvm-11/bin/
 
 BUILD_CROSS_COMPILE=$GCC_BIN_PATH/aarch64-none-linux-gnu-
 BUILD_CC=$CLANG_BIN_PATH/clang

@@ -769,6 +769,7 @@ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
 KBUILD_CFLAGS += $(call cc-disable-warning, duplicate-decl-specifier)
 KBUILD_CFLAGS += $(call cc-disable-warning, sizeof-pointer-div)
 KBUILD_CFLAGS += $(call cc-disable-warning, sizeof-array-div)
+KBUILD_CFLAGS += $(call cc-disable-warning, pointer-to-int-cast)
 # Quiet clang warning: comparison of unsigned expression < 0 is always false
 KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
 # CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
