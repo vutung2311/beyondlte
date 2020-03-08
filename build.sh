@@ -61,7 +61,9 @@ FUNC_BUILD_KERNEL()
 			echo ""
 			./scripts/config \
 			-d LTO_NONE \
+			-e LD_DEAD_CODE_DATA_ELIMINATION \
 			-e LTO_CLANG \
+			-e THINLTO \
 			-e CFI_CLANG \
 			-e CFI_PERMISSIVE \
 			-e CFI_CLANG_SHADOW \
