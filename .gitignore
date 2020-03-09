@@ -119,6 +119,7 @@ all.config
 
 # Build log
 build.log
+build.log.*
 last_kmsg*
 logcat*
 
