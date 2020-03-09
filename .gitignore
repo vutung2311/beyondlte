@@ -126,4 +126,4 @@ logcat*
 !.gitkeep
 
 # flashing zip for g970f
-g970f_kernel.zip
+*.zip
