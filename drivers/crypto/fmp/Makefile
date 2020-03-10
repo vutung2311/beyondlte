@@ -1,5 +1,6 @@
 # Exynos FMP/SMU makefile
 #ccflags-y := -DCONFIG_EXYNOS_FMP_FIPS_FUNC_TEST
+
 obj-$(CONFIG_EXYNOS_SMU) += smu.o
 CC_NO_CLANG := $(shell $(CC) -dM -E -x c /dev/null | grep -Fq "__clang__"; echo $$?)
 ifeq ($(CC_NO_CLANG), 0)
