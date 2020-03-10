@@ -707,11 +707,25 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
 KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
+ifeq ($(CONFIG_LTO_CLANG),y)
+ifeq ($(call ld-name),lld)
+LDFLAGS += --lto-Oz
+endif
+endif
+else
+ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
+ifeq ($(CONFIG_LTO_CLANG),y)
+ifeq ($(call ld-name),lld)
+LDFLAGS += --lto-O2
+endif
+endif
+KBUILD_CFLAGS	+= -O2
 else
 ifdef CONFIG_PROFILE_ALL_BRANCHES
 KBUILD_CFLAGS	+= -O2 $(call cc-disable-warning,maybe-uninitialized,)
 else
 KBUILD_CFLAGS   += -O2
+endif
 endif
 endif
 
@@ -774,6 +788,7 @@ KBUILD_CFLAGS += $(call cc-disable-warning, duplicate-decl-specifier)
 KBUILD_CFLAGS += $(call cc-disable-warning, sizeof-pointer-div)
 KBUILD_CFLAGS += $(call cc-disable-warning, sizeof-array-div)
 KBUILD_CFLAGS += $(call cc-disable-warning, pointer-to-int-cast)
+KBUILD_CFLAGS += $(call cc-disable-warning, int-in-bool-context)
 # Quiet clang warning: comparison of unsigned expression < 0 is always false
 KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
 # CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
@@ -866,7 +881,7 @@ LDFLAGS		+= --thinlto-cache-dir=.thinlto-cache
 else
 lto-clang-flags	:= -flto
 endif
-lto-clang-flags += -fvisibility=default $(call cc-option, -fsplit-lto-unit)
+lto-clang-flags += -fvisibility=hidden -fsplit-lto-unit
 
 # Limit inlining across translation units to reduce binary size
 LD_FLAGS_LTO_CLANG := -mllvm -import-instr-limit=5
@@ -875,7 +890,7 @@ LDFLAGS += $(LD_FLAGS_LTO_CLANG)
 KBUILD_LDFLAGS_MODULE += $(LD_FLAGS_LTO_CLANG)
 
 # allow disabling only clang LTO where needed
-DISABLE_LTO_CLANG := -fno-lto
+DISABLE_LTO_CLANG := -fno-lto -fvisibility=default
 export DISABLE_LTO_CLANG
 endif
 
