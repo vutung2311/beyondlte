@@ -31,6 +31,7 @@ obj-$(CONFIG_MSM_SCM)			+= tz_msm_platform.o
 obj-$(CONFIG_TZDEV_BOOST)		+= tz_boost.o
 obj-$(CONFIG_TZDEV_CMA)			+= tz_cma.o
 obj-$(CONFIG_TZDEV_DEPLOY_TZAR)		+= tz_deploy_tzar.o
+CFLAGS_tz_deploy_tzar.o = $(DISABLE_LTO)
 obj-$(CONFIG_TZDEV_HOTPLUG)		+= tz_hotplug.o
 obj-$(CONFIG_TZIRS)			+= tzirs.o
 obj-$(CONFIG_TZLOG)			+= tz_iwlog.o

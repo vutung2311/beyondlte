@@ -61,14 +61,12 @@ FUNC_BUILD_KERNEL()
 			echo ""
 			./scripts/config \
 			-d LTO_NONE \
-			-e LD_DEAD_CODE_DATA_ELIMINATION \
+			-d MODVERSIONS \
 			-e LTO_CLANG \
 			-e THINLTO \
 			-e CFI_CLANG \
 			-e CFI_PERMISSIVE \
-			-e CFI_CLANG_SHADOW \
-			-d ARM64_ERRATUM_843419 \
-			-d MODVERSIONS
+			-e CFI_CLANG_SHADOW
 			OUTPUT_ZIP=${OUTPUT_ZIP}".lto"
 			break
 		fi
