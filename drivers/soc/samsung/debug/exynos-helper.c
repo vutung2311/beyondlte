@@ -451,7 +451,7 @@ static void exynos_dump_info(void *val)
 			exynos_cpu_err_parse(L2MERR0SR, reg1);
 
 			/* L3 MERR */
-			asm volatile ("msr S3_1_c15_c7_1, %0\n\t"
+			asm volatile ("msr S3_1_c15_c7_1, %x0\n\t"
 					"isb\n"
 					:: "r" (0));
 			asm volatile ("mrs %0, S3_1_c15_c3_0\n\t"
@@ -459,7 +459,7 @@ static void exynos_dump_info(void *val)
 					: "=r" (reg1), "=r" (reg2));
 			pr_emerg("BANK0 L3MERR0SR: %016lx, L3MERR1SR: %016lx\n", reg1, reg2);
 			exynos_cpu_err_parse(L3MERR0SR, reg1);
-			asm volatile ("msr S3_1_c15_c7_1, %0\n\t"
+			asm volatile ("msr S3_1_c15_c7_1, %x0\n\t"
 					"isb\n"
 					:: "r" (1));
 			asm volatile ("mrs %0, S3_1_c15_c3_0\n\t"
@@ -467,7 +467,7 @@ static void exynos_dump_info(void *val)
 					: "=r" (reg1), "=r" (reg2));
 			pr_emerg("BANK1 L3MERR0SR: %016lx, L3MERR1SR: %016lx\n", reg1, reg2);
 			exynos_cpu_err_parse(L3MERR0SR, reg1);
-			asm volatile ("msr S3_1_c15_c7_1, %0\n\t"
+			asm volatile ("msr S3_1_c15_c7_1, %x0\n\t"
 					"isb\n"
 					:: "r" (2));
 			asm volatile ("mrs %0, S3_1_c15_c3_0\n\t"
@@ -475,7 +475,7 @@ static void exynos_dump_info(void *val)
 					: "=r" (reg1), "=r" (reg2));
 			pr_emerg("BANK2 L3MERR0SR: %016lx, L3MERR1SR: %016lx\n", reg1, reg2);
 			exynos_cpu_err_parse(L3MERR0SR, reg1);
-			asm volatile ("msr S3_1_c15_c7_1, %0\n\t"
+			asm volatile ("msr S3_1_c15_c7_1, %x0\n\t"
 					"isb\n"
 					:: "r" (3));
 			asm volatile ("mrs %0, S3_1_c15_c3_0\n\t"
@@ -511,7 +511,7 @@ static void exynos_dump_info(void *val)
 			pr_emerg("DISR_EL1: %016lx\n", reg1);
 			exynos_cpu_err_parse(DISR_EL1, reg1);
 
-			asm volatile ("msr S3_0_c5_c3_1, %0\n"
+			asm volatile ("msr S3_0_c5_c3_1, %x0\n"
 					"isb\n"
 					:: "r" (0)); /* set CPU ERRSELR_EL1 */
 
@@ -523,7 +523,7 @@ static void exynos_dump_info(void *val)
 					"ERXMISC0_EL1: %016lx\n", reg1, reg2, reg3);
 			exynos_cpu_err_parse(ERXSTATUS_EL1, reg1);
 
-			asm volatile ("msr S3_0_c5_c3_1, %0\n"
+			asm volatile ("msr S3_0_c5_c3_1, %x0\n"
 					"isb\n"
 					:: "r" (1)); /* set DSU ERRSELR_EL1 */
 
