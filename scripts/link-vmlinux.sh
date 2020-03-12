@@ -101,6 +101,15 @@ lto_lds()
 modpost_link()
 {
 	local objects
+	local ld=${LD}
+	local ldflags="${LDFLAGS}"
+
+	if [ -n "${LDFINAL_modpost}" ]; then
+		ld=${LDFINAL_modpost}
+	fi
+	if [ -n "${LDFLAGS_FINAL_modpost}" ]; then
+		ldflags=${LDFLAGS_FINAL_modpost}
+	fi
 
 	if [ -n "${CONFIG_THIN_ARCHIVES}" ]; then
 		objects="--whole-archive				\
@@ -125,7 +134,7 @@ modpost_link()
 		info LD vmlinux.o
 	fi
 
-	${LD} ${LDFLAGS} -r -o ${1} $(lto_lds) ${objects}
+	${ld} ${ldflags} -r -o ${1} $(lto_lds) ${objects}
 }
 
 # If CONFIG_LTO_CLANG is selected, we postpone running recordmcount until
@@ -155,6 +164,8 @@ vmlinux_link()
 
 		if [ -n "${LDFINAL_vmlinux}" ]; then
 			ld=${LDFINAL_vmlinux}
+		fi
+		if [ -n "${LDFLAGS_FINAL_vmlinux}" ]; then
 			ldflags="${LDFLAGS_FINAL_vmlinux} ${LDFLAGS_vmlinux}"
 		fi
 

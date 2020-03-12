@@ -692,6 +692,33 @@ LLVM_NM	:= $(LLVM_BIN_PATH)/llvm-nm
 export LLVM_AR LLVM_NM
 endif
 
+ifdef CONFIG_LTO_GCC
+lto-gcc-flags := -flto -ffat-lto-objects
+
+LTO_FINAL_CFLAGS := $(lto-gcc-flags) \
+				-flto=jobserver \
+				-fuse-linker-plugin \
+				-fwhole-program \
+				-Wno-stringop-overflow \
+				-Wno-lto-type-mismatch \
+				-Wno-psabi \
+				$(filter -pg,$(KBUILD_CFLAGS)) \
+				$(filter -fno-strict-aliasing,$(KBUILD_CFLAGS))
+
+LDFINAL_ko := $(CONFIG_SHELL) $(srctree)/scripts/gcc-ld $(LTO_FINAL_CFLAGS)
+LDFINAL_modpost := $(LDFINAL_ko) 
+LDFINAL_vmlinux := $(LDFINAL_ko)
+AR := $(CROSS_COMPILE)gcc-ar
+NM := $(CROSS_COMPILE)gcc-nm
+DISABLE_LTO_GCC := -fno-lto
+
+# LTO gcc creates a lot of files in TMPDIR, and with /tmp as tmpfs
+# it's easy to drive the machine OOM. Use the object directory
+# instead.
+TMPDIR ?= $(shell [ -d '$(srctree)/.lto-gcc-tmp' ] || mkdir -p '$(srctree)/.lto-gcc-tmp' && echo '$(srctree)/.lto-gcc-tmp')
+export DISABLE_LTO_GCC TMPDIR LDFINAL_ko LDFINAL_modpost LDFLAGS_FINAL_modpost
+endif
+
 # The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
 # values of the respective KBUILD_* variables
 ARCH_CPPFLAGS :=
@@ -911,15 +938,18 @@ export DISABLE_LTO_CLANG
 endif
 
 ifdef CONFIG_LTO
+ifdef CONFIG_LTO_CLANG
 lto-flags	:= $(lto-clang-flags)
-KBUILD_CFLAGS	+= $(lto-flags)
-
 DISABLE_LTO	:= $(DISABLE_LTO_CLANG)
-export DISABLE_LTO
+else ifdef CONFIG_LTO_GCC
+lto-flags	:= $(lto-gcc-flags)
+DISABLE_LTO	:= $(DISABLE_LTO_GCC)
+endif
+KBUILD_CFLAGS	+= $(lto-flags)
 
 # LDFINAL_vmlinux and LDFLAGS_FINAL_vmlinux can be set to override
 # the linker and flags for vmlinux_link.
-export LDFINAL_vmlinux LDFLAGS_FINAL_vmlinux
+export DISABLE_LTO LDFINAL_vmlinux LDFLAGS_FINAL_vmlinux
 endif
 
 ifdef CONFIG_CFI_CLANG
