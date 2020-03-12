@@ -58,7 +58,6 @@ FUNC_BUILD_KERNEL()
 		if [[ "$var" = "--with-lto" ]] ; then
 			echo ""
 			echo "Enable LTO_CLANG"
-			echo ""
 			./scripts/config \
 			-d LTO_NONE \
 			-d MODVERSIONS \
@@ -68,8 +67,14 @@ FUNC_BUILD_KERNEL()
 			-e CFI_PERMISSIVE \
 			-e CFI_CLANG_SHADOW
 			OUTPUT_ZIP=${OUTPUT_ZIP}".lto"
-			break
+			continue
 		fi
+        if [[ "$var" = "--with-supersu" ]] ; then
+            echo "Enable ASSISTED_SUPERUSER"
+            ./scripts/config \
+            -e ASSISTED_SUPERUSER
+            continue
+        fi
 	done
 
 	make -j$BUILD_JOB_NUMBER ARCH=${ARCH} \
