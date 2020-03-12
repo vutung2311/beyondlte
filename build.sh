@@ -7,7 +7,7 @@ export PLATFORM_VERSION=10.0.0
 export KBUILD_COMPILER_STRING="LLVM Clang 9.0"
 
 GCC_BIN_PATH=$HOME/Toolchain/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin
-CLANG_BIN_PATH=/usr/lib/llvm-11/bin/
+CLANG_BIN_PATH=/usr/lib/llvm-10/bin
 
 BUILD_CROSS_COMPILE=$GCC_BIN_PATH/aarch64-none-linux-gnu-
 BUILD_CC=$CLANG_BIN_PATH/clang
@@ -59,13 +59,13 @@ FUNC_BUILD_KERNEL()
 			echo ""
 			echo "Enable LTO_CLANG"
 			./scripts/config \
-			-d LTO_NONE \
-			-d MODVERSIONS \
-			-e LTO_CLANG \
-			-e THINLTO \
-			-e CFI_CLANG \
-			-e CFI_PERMISSIVE \
-			-e CFI_CLANG_SHADOW
+			-e CONFIG_LTO \
+			-e CONFIG_THINLTO \
+			-d CONFIG_LTO_NONE \
+			-e CONFIG_LTO_CLANG \
+			-e CONFIG_CFI_CLANG \
+			-e CONFIG_CFI_PERMISSIVE \
+			-e CONFIG_CFI_CLANG_SHADOW
 			OUTPUT_ZIP=${OUTPUT_ZIP}".lto"
 			continue
 		fi
@@ -76,6 +76,7 @@ FUNC_BUILD_KERNEL()
             continue
         fi
 	done
+	echo ""
 
 	make -j$BUILD_JOB_NUMBER ARCH=${ARCH} \
 			CC=$BUILD_CC \

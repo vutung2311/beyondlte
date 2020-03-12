@@ -684,9 +684,9 @@ LDFLAGS		+= -plugin LLVMgold.so
 endif
 # use llvm-ar for building symbol tables from IR files, and llvm-dis instead
 # of objdump for processing symbol versions and exports
-LLVM_BIN_PATH := $(dir $(shell which $(CC)))
+LLVM_BIN_PATH := $(patsubst %/,%,$(dir $(shell which $(CC))))
 LLVM_AR		:= $(LLVM_BIN_PATH)/llvm-ar
-LLVM_NM		:= $(LLVM_BIN_PATH)/llvm-nm
+LLVM_NM	:= $(LLVM_BIN_PATH)/llvm-nm
 export LLVM_AR LLVM_NM
 endif
 
@@ -708,14 +708,14 @@ ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
 KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
 ifeq ($(CONFIG_LTO_CLANG),y)
-ifeq ($(call ld-name),lld)
+ifeq ($(ld-name),lld)
 LDFLAGS += --lto-Oz
 endif
 endif
 else
 ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
 ifeq ($(CONFIG_LTO_CLANG),y)
-ifeq ($(call ld-name),lld)
+ifeq ($(ld-name),lld)
 LDFLAGS += --lto-O2
 endif
 endif
@@ -1282,7 +1282,7 @@ ifdef CONFIG_LTO_CLANG
 	@echo Cannot use CONFIG_LTO_CLANG: requires clang 5.0 or later >&2 && exit 1
   endif
   ifneq ($(call gold-ifversion, -ge, 112000000, y), y)
-  ifneq ($(call ld-name),lld)
+  ifneq ($(ld-name),lld)
 	@echo Cannot use CONFIG_LTO_CLANG: requires GNU gold 1.12+ or LLVM LD >&2 && exit 1
   endif
   endif

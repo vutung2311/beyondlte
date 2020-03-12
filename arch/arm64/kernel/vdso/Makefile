@@ -15,7 +15,7 @@ obj-vdso := $(addprefix $(obj)/, $(obj-vdso))
 ccflags-y := -shared -fno-common -fno-builtin
 ccflags-y += -nostdlib -Wl,-soname=linux-vdso.so.1 -Wl,--hash-style=sysv
 ccflags-y += $(DISABLE_LTO)
-ifeq ($(call ld-name),lld)
+ifeq ($(ld-name),lld)
 ccflags-y += -fuse-ld=lld
 aflags-y := -fuse-ld=lld
 endif
