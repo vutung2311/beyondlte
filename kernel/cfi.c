@@ -1,18 +1,17 @@
+// SPDX-License-Identifier: GPL-2.0
 /*
- * CFI (Control Flow Integrity) error and slowpath handling
+ * Clang Control Flow Integrity (CFI) error and slowpath handling.
  *
- * Copyright (C) 2017 Google, Inc.
+ * Copyright (C) 2019 Google LLC
  */
 
 #include <linux/gfp.h>
 #include <linux/module.h>
+#include <linux/mutex.h>
 #include <linux/printk.h>
 #include <linux/ratelimit.h>
 #include <linux/rcupdate.h>
-#include <linux/spinlock.h>
-#include <asm/bug.h>
 #include <asm/cacheflush.h>
-#include <asm/memory.h>
 #include <asm/set_memory.h>
 
 /* Compiler-defined handler names */
@@ -26,12 +25,10 @@
 
 static inline void handle_cfi_failure(void *ptr)
 {
-#ifdef CONFIG_CFI_PERMISSIVE
-	WARN_RATELIMIT(1, "CFI failure (target: [<%px>] %pF):\n", ptr, ptr);
-#else
-	pr_err("CFI failure (target: [<%px>] %pF):\n", ptr, ptr);
-	BUG();
-#endif
+	if (IS_ENABLED(CONFIG_CFI_PERMISSIVE))
+		WARN_RATELIMIT(1, "CFI failure (target: %pS):\n", ptr);
+	else
+		panic("CFI failure (target: %pS)\n", ptr);
 }
 
 #ifdef CONFIG_MODULES
@@ -45,7 +42,7 @@ struct shadow_range {
 	unsigned long max_page;
 };
 
-#define SHADOW_ORDER	1
+#define SHADOW_ORDER	2
 #define SHADOW_PAGES	(1 << SHADOW_ORDER)
 #define SHADOW_SIZE \
 	((SHADOW_PAGES * PAGE_SIZE - sizeof(struct shadow_range)) / sizeof(u16))
@@ -58,8 +55,8 @@ struct cfi_shadow {
 	u16 shadow[SHADOW_SIZE];
 };
 
-static DEFINE_SPINLOCK(shadow_update_lock);
-static struct cfi_shadow __rcu *cfi_shadow __read_mostly = NULL;
+static DEFINE_MUTEX(shadow_update_lock);
+static struct cfi_shadow __rcu *cfi_shadow __read_mostly;
 
 static inline int ptr_to_shadow(const struct cfi_shadow *s, unsigned long ptr)
 {
@@ -80,12 +77,22 @@ static inline int ptr_to_shadow(const struct cfi_shadow *s, unsigned long ptr)
 static inline unsigned long shadow_to_ptr(const struct cfi_shadow *s,
 	int index)
 {
-	BUG_ON(index < 0 || index >= SHADOW_SIZE);
+	if (unlikely(index < 0 || index >= SHADOW_SIZE))
+		return 0;
 
 	if (unlikely(s->shadow[index] == SHADOW_INVALID))
 		return 0;
 
 	return (s->r.min_page + s->shadow[index]) << PAGE_SHIFT;
+}
+
+static inline unsigned long shadow_to_page(const struct cfi_shadow *s,
+	int index)
+{
+	if (unlikely(index < 0 || index >= SHADOW_SIZE))
+		return 0;
+
+	return (s->r.min_page + index) << PAGE_SHIFT;
 }
 
 static void prepare_next_shadow(const struct cfi_shadow __rcu *prev,
@@ -110,7 +117,7 @@ static void prepare_next_shadow(const struct cfi_shadow __rcu *prev,
 		if (prev->shadow[i] == SHADOW_INVALID)
 			continue;
 
-		index = ptr_to_shadow(next, shadow_to_ptr(prev, i));
+		index = ptr_to_shadow(next, shadow_to_page(prev, i));
 		if (index < 0)
 			continue;
 
@@ -131,7 +138,8 @@ static void add_module_to_shadow(struct cfi_shadow *s, struct module *mod)
 	unsigned long check = (unsigned long)mod->cfi_check;
 	int check_index = ptr_to_shadow(s, check);
 
-	BUG_ON((check & PAGE_MASK) != check); /* Must be page aligned */
+	if (unlikely((check & PAGE_MASK) != check))
+		return; /* Must be page aligned */
 
 	if (check_index < 0)
 		return; /* Module not addressable with shadow */
@@ -144,9 +152,10 @@ static void add_module_to_shadow(struct cfi_shadow *s, struct module *mod)
 	/* For each page, store the check function index in the shadow */
 	for (ptr = min_page_addr; ptr <= max_page_addr; ptr += PAGE_SIZE) {
 		int index = ptr_to_shadow(s, ptr);
+
 		if (index >= 0) {
-			/* Assume a page only contains code for one module */
-			BUG_ON(s->shadow[index] != SHADOW_INVALID);
+			/* Each page must only contain one module */
+			WARN_ON(s->shadow[index] != SHADOW_INVALID);
 			s->shadow[index] = (u16)check_index;
 		}
 	}
@@ -165,6 +174,7 @@ static void remove_module_from_shadow(struct cfi_shadow *s, struct module *mod)
 
 	for (ptr = min_page_addr; ptr <= max_page_addr; ptr += PAGE_SIZE) {
 		int index = ptr_to_shadow(s, ptr);
+
 		if (index >= 0)
 			s->shadow[index] = SHADOW_INVALID;
 	}
@@ -179,14 +189,12 @@ static void update_shadow(struct module *mod, unsigned long min_addr,
 	struct cfi_shadow *next = (struct cfi_shadow *)
 		__get_free_pages(GFP_KERNEL, SHADOW_ORDER);
 
-	BUG_ON(!next);
-
 	next->r.mod_min_addr = min_addr;
 	next->r.mod_max_addr = max_addr;
 	next->r.min_page = min_addr >> PAGE_SHIFT;
 	next->r.max_page = max_addr >> PAGE_SHIFT;
 
-	spin_lock(&shadow_update_lock);
+	mutex_lock(&shadow_update_lock);
 	prev = rcu_dereference_protected(cfi_shadow,
 					 mutex_is_locked(&shadow_update_lock));
 	prepare_next_shadow(prev, next);
@@ -195,7 +203,7 @@ static void update_shadow(struct module *mod, unsigned long min_addr,
 	set_memory_ro((unsigned long)next, SHADOW_PAGES);
 	rcu_assign_pointer(cfi_shadow, next);
 
-	spin_unlock(&shadow_update_lock);
+	mutex_unlock(&shadow_update_lock);
 	synchronize_rcu();
 
 	if (prev) {
