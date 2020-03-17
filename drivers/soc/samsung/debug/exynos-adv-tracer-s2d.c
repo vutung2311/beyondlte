@@ -100,9 +100,8 @@ int adv_tracer_s2d_set_blk_info(unsigned int all)
 	return 0;
 }
 
-static int adv_tracer_s2d_handler(struct adv_tracer_ipc_cmd *cmd, unsigned int len)
+static void adv_tracer_s2d_handler(struct adv_tracer_ipc_cmd *cmd, unsigned int len)
 {
-	return 0;
 }
 
 static ssize_t s2d_enable_store(struct device *dev,
@@ -167,7 +166,7 @@ static int adv_tracer_s2d_probe(struct platform_device *pdev)
 	plugin_s2d.pdev = pdev;
 	plugin_s2d.s2d_dev = s2d;
 
-	ret = adv_tracer_ipc_request_channel(node, (ipc_callback)adv_tracer_s2d_handler,
+	ret = adv_tracer_ipc_request_channel(node, adv_tracer_s2d_handler,
 				&s2d->id, &s2d->len);
 	if (ret < 0) {
 		dev_err(&pdev->dev, "s2d ipc request fail(%d)\n",ret);
