@@ -897,7 +897,7 @@ int dhd_add_monitor(const char *name, struct net_device **new_ndev);
 int dhd_del_monitor(struct net_device *ndev);
 int dhd_monitor_init(void *dhd_pub);
 int dhd_monitor_uninit(void);
-int dhd_start_xmit(struct sk_buff *skb, struct net_device *net);
+netdev_tx_t dhd_start_xmit(struct sk_buff *skb, struct net_device *net);
 
 #ifdef ESCAN_CHANNEL_CACHE
 void reset_roam_cache(struct bcm_cfg80211 *cfg);

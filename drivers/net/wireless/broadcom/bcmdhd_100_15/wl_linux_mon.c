@@ -52,7 +52,7 @@ typedef enum monitor_states
 	MONITOR_STATE_INTERFACE_DELETED = 0x4
 } monitor_states_t;
 int dhd_add_monitor(const char *name, struct net_device **new_ndev);
-extern int dhd_start_xmit(struct sk_buff *skb, struct net_device *net);
+extern netdev_tx_t dhd_start_xmit(struct sk_buff *skb, struct net_device *net);
 int dhd_del_monitor(struct net_device *ndev);
 int dhd_monitor_init(void *dhd_pub);
 int dhd_monitor_uninit(void);
@@ -243,7 +243,7 @@ static int dhd_mon_if_subif_start_xmit(struct sk_buff *skb, struct net_device *n
 		MON_PRINT("if name: %s, matched if name %s\n", ndev->name, mon_if->real_ndev->name);
 
 		/* Use the real net device to transmit the packet */
-		ret = dhd_start_xmit(skb, mon_if->real_ndev);
+		ret = (int)dhd_start_xmit(skb, mon_if->real_ndev);
 
 		return ret;
 	}

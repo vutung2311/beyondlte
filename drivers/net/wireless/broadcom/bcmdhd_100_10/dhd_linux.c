@@ -4653,7 +4653,7 @@ dhd_lb_sendpkt(dhd_info_t *dhd, struct net_device *net,
 }
 #endif /* DHD_LB_TXP */
 
-int BCMFASTPATH
+netdev_tx_t BCMFASTPATH
 dhd_start_xmit(struct sk_buff *skb, struct net_device *net)
 {
 	int ret;
@@ -4954,7 +4954,7 @@ void dhd_start_xmit_wq_adapter(struct work_struct *ptr)
 	}
 
 	if (pm_runtime_get_sync(dhd_bus_to_dev(bus)) >= 0) {
-		ret = dhd_start_xmit(work->skb, work->net);
+		ret = (int)dhd_start_xmit(work->skb, work->net);
 		pm_runtime_mark_last_busy(dhd_bus_to_dev(bus));
 		pm_runtime_put_autosuspend(dhd_bus_to_dev(bus));
 	}
@@ -4995,7 +4995,7 @@ dhd_start_xmit_wrapper(struct sk_buff *skb, struct net_device *net)
 		ret = NET_XMIT_SUCCESS;
 
 	} else if (dhd->pub.busstate == DHD_BUS_DATA) {
-		ret = dhd_start_xmit(skb, net);
+		ret = (int)dhd_start_xmit(skb, net);
 	} else {
 		/* when bus is down */
 		ret = -ENODEV;
