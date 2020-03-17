@@ -1760,7 +1760,7 @@ enum disp_pwr_mode {
 	DISP_PWR_MAX,
 };
 
-typedef int (*set_pwr_state_t)(void *);
+typedef int (*set_pwr_state_t)(struct decon_device *);
 
 struct disp_pwr_state {
 	u32 state;

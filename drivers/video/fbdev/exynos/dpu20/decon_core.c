@@ -1035,19 +1035,19 @@ out:
 struct disp_pwr_state decon_pwr_state[] = {
 	[DISP_PWR_OFF] = {
 		.state = DECON_STATE_OFF,
-		.set_pwr_state = (set_pwr_state_t)decon_disable,
+		.set_pwr_state = decon_disable,
 	},
 	[DISP_PWR_DOZE] = {
 		.state = DECON_STATE_DOZE,
-		.set_pwr_state = (set_pwr_state_t)decon_doze,
+		.set_pwr_state = decon_doze,
 	},
 	[DISP_PWR_NORMAL] = {
 		.state = DECON_STATE_ON,
-		.set_pwr_state = (set_pwr_state_t)decon_enable,
+		.set_pwr_state = decon_enable,
 	},
 	[DISP_PWR_DOZE_SUSPEND] = {
 		.state = DECON_STATE_DOZE_SUSPEND,
-		.set_pwr_state = (set_pwr_state_t)decon_doze_wake,
+		.set_pwr_state = decon_doze_wake,
 	},
 };
 
