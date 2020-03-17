@@ -1,6 +1,6 @@
 subdir-ccflags-y += -I$(srctree)/drivers/misc/tzdev/include
 subdir-ccflags-y += -I$(srctree)/drivers/misc/tzdev
-ccflags-$(CONFIG_TZDEV_DEPLOY_TZAR) += -D"_STR(s)=\#s" -D"KBUILD_SRC=_STR($(KBUILD_SRC))"
+ccflags-$(CONFIG_TZDEV_DEPLOY_TZAR) += -D"_STR(s)=\#s" -D"KBUILD_SRC=_STR($(srctree))"
 
 obj-$(CONFIG_TZDEV)			+= lib/
 obj-$(CONFIG_TZDEV)			+= teec/
@@ -31,7 +31,6 @@ obj-$(CONFIG_MSM_SCM)			+= tz_msm_platform.o
 obj-$(CONFIG_TZDEV_BOOST)		+= tz_boost.o
 obj-$(CONFIG_TZDEV_CMA)			+= tz_cma.o
 obj-$(CONFIG_TZDEV_DEPLOY_TZAR)		+= tz_deploy_tzar.o
-CFLAGS_tz_deploy_tzar.o = $(DISABLE_LTO)
 obj-$(CONFIG_TZDEV_HOTPLUG)		+= tz_hotplug.o
 obj-$(CONFIG_TZIRS)			+= tzirs.o
 obj-$(CONFIG_TZLOG)			+= tz_iwlog.o
