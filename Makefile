@@ -420,13 +420,15 @@ LINUXINCLUDE    := \
 		-I$(objtree)/include \
 		$(USERINCLUDE)
 
-KBUILD_AFLAGS   := -D__ASSEMBLY__ -march=armv8-a+lse
+tune-for-big-core := -march=armv8.2-a
+tune-for-small-core := -mcpu=cortex-a55
+KBUILD_AFLAGS   := -D__ASSEMBLY__ $(tune-for-big-core) $(tune-for-small-core)
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common -fshort-wchar \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
 		   -Werror \
-		   -Xassembler -march=armv8-a+lse \
+		   -Xassembler $(tune-for-big-core) $(tune-for-small-core) \
 		   -std=gnu89
 KBUILD_CPPFLAGS := -D__KERNEL__
 KBUILD_AFLAGS_KERNEL :=
@@ -887,7 +889,9 @@ lto-clang-flags += -fvisibility=hidden -fsplit-lto-unit
 KBUILD_LDFLAGS_MODULE += -T $(srctree)/scripts/module-lto.lds
 
 # Limit inlining across translation units to reduce binary size
-LD_FLAGS_LTO_CLANG := -mllvm -import-instr-limit=5
+LD_FLAGS_LTO_CLANG := -mllvm -import-instr-limit=5 \
+	-mllvm $(tune-for-big-core) \
+	-mllvm $(tune-for-small-core)
 
 LDFLAGS += $(LD_FLAGS_LTO_CLANG)
 KBUILD_LDFLAGS_MODULE += $(LD_FLAGS_LTO_CLANG)
