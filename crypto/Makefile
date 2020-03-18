@@ -61,6 +61,7 @@ obj-$(CONFIG_CRYPTO_KBKDF_CTR_HMAC_SHA512) += kbkdf.o
 # Keep this at the bottom of FIPS boundary
 obj-$(CONFIG_CRYPTO_FIPS) += last_file.o
 obj-$(CONFIG_CRYPTO_FIPS) += fips_out.o
+CFLAGS_fips_out.o = $(DISABLE_LTO)
 # ---------------------------------------
 
 obj-$(CONFIG_CRYPTO_WORKQUEUE) += crypto_wq.o

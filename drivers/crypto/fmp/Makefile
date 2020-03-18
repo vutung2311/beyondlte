@@ -21,6 +21,7 @@ endif
 #obj-y += fmp_fips_func_test.o
 obj-$(CONFIG_EXYNOS_FMP_FIPS) += last_file.o
 obj-$(CONFIG_EXYNOS_FMP_FIPS) += fips_out.o
+CFLAGS_fips_out.o = $(DISABLE_LTO)
 
 # KASAN White list
 KASAN_SANITIZE_sha256.o := n
