@@ -1621,7 +1621,7 @@ static int dhd_wait_for_file_dump(dhd_pub_t *dhdp)
 	DHD_OS_WAKE_LOCK(dhdp);
 	/* check for hal started and only then send event if not clear dump state here */
 	if (wl_cfg80211_is_hal_started(cfg)) {
-		int timeleft = 0;
+		int __maybe_unused timeleft = 0;
 
 		DHD_ERROR(("[DUMP] %s: HAL started. send urgent event\n", __FUNCTION__));
 		dhd_dbg_send_urgent_evt(dhdp, NULL, 0);

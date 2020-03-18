@@ -1395,11 +1395,19 @@ ifeq ($(CONFIG_ARCH_SDM845),y)
 endif
 ifeq ($(CONFIG_SOC_EXYNOS9820),y)
   DHDCFLAGS += -Wno-date-time
-  DHDCFLAGS += -Wno-sometimes-uninitialized
+  ifeq ($(cc-name),gcc)
+    DHDCFLAGS += -Wno-maybe-uninitialized
+  else
+    DHDCFLAGS += -Wno-sometimes-uninitialized
+  endif
 endif
 ifeq ($(CONFIG_ARCH_SM8150),y)
   DHDCFLAGS += -Wno-date-time
-  DHDCFLAGS += -Wno-sometimes-uninitialized
+  ifeq ($(cc-name),gcc)
+    DHDCFLAGS += -Wno-maybe-uninitialized
+  else
+    DHDCFLAGS += -Wno-sometimes-uninitialized
+  endif
 endif
 
 # DTS Support
