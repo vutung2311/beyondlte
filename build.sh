@@ -15,12 +15,17 @@ CLANG_BIN_PATH=/usr/lib/llvm-10/bin
 
 BUILD_CROSS_COMPILE=$GCC_ARM64_BIN_PATH/aarch64-none-linux-gnu-
 BUILD_CROSS_COMPILE_ARM32=$GCC_ARM32_BIN_PATH/arm-none-linux-gnueabihf-
-BUILD_CC=$CLANG_BIN_PATH/clang
-# BUILD_CC="${BUILD_CROSS_COMPILE}gcc"
-BUILD_LD=$CLANG_BIN_PATH/ld.lld
-# BUILD_LD="${BUILD_CROSS_COMPILE}ld"
-BUILD_LDLTO=$CLANG_BIN_PATH/ld.lld
-# BUILD_LDLTO="${BUILD_CROSS_COMPILE}ld.gold"
+CLANG_CC=$CLANG_BIN_PATH/clang
+GCC_CC="${BUILD_CROSS_COMPILE}gcc"
+CLANG_LD=$CLANG_BIN_PATH/ld.lld
+GCC_LD="${BUILD_CROSS_COMPILE}ld"
+CLANG_LDLTO=$CLANG_BIN_PATH/ld.lld
+GCC_LDLTO="${BUILD_CROSS_COMPILE}ld.gold"
+
+CC=$GCC_CC
+LD=$GCC_LD
+LDLTO=$GCC_LDLTO
+
 BUILD_JOB_NUMBER="$(nproc)"
 # BUILD_JOB_NUMBER=1
 
@@ -52,16 +57,13 @@ FUNC_BUILD_KERNEL()
 	FUNC_CLEAN_DTB
 
 	make -j$BUILD_JOB_NUMBER ARCH=${ARCH} \
-			CC=$BUILD_CC \
-			LD=$BUILD_LD \
-			LDLTO=$BUILD_LDLTO \
 			CROSS_COMPILE="$BUILD_CROSS_COMPILE" \
 			CROSS_COMPILE_ARM32="$BUILD_CROSS_COMPILE_ARM32" \
 			$KERNEL_DEFCONFIG || exit -1
 
 	for var in "$@"
 	do
-		if [[ "$var" = "--with-lto" ]] ; then
+		if [[ "$var" = "--with-lto-clang" ]] ; then
 			echo ""
 			echo "Enable LTO_CLANG"
 			./scripts/config \
@@ -72,6 +74,19 @@ FUNC_BUILD_KERNEL()
 			-e CONFIG_CFI_CLANG \
 			-e CONFIG_CFI_PERMISSIVE \
 			-e CONFIG_CFI_CLANG_SHADOW
+			OUTPUT_ZIP=${OUTPUT_ZIP}".lto"
+			CC=$CLANG_CC
+			LD=$CLANG_LD
+			LDLTO=$CLANG_LDLTO
+			continue
+		fi
+		if [[ "$var" = "--with-lto-gcc" ]] ; then
+			echo ""
+			echo "Enable LTO_GCC"
+			./scripts/config \
+			-e CONFIG_LTO \
+			-d CONFIG_LTO_NONE \
+			-e CONFIG_LTO_GCC
 			OUTPUT_ZIP=${OUTPUT_ZIP}".lto"
 			continue
 		fi
@@ -85,9 +100,9 @@ FUNC_BUILD_KERNEL()
 	echo ""
 
 	make -j$BUILD_JOB_NUMBER ARCH=${ARCH} \
-			CC=$BUILD_CC \
-			LD=$BUILD_LD \
-			LDLTO=$BUILD_LDLTO \
+			CC=$CC \
+			LD=$LD \
+			LDLTO=$LDLTO \
 			CROSS_COMPILE_ARM32="$BUILD_CROSS_COMPILE_ARM32" \
 			CROSS_COMPILE="$BUILD_CROSS_COMPILE" || exit -1
 
