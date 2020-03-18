@@ -1,6 +1,9 @@
 #!/bin/bash
 
-ARCH=arm64
+timestamp=`date +%s`
+mv build.log build.log.$timestamp
+
+export ARCH=arm64
 export KBUILD_BUILD_USER=BuildUser
 export KBUILD_BUILD_HOST=BuildHost
 export PLATFORM_VERSION=10.0.0
