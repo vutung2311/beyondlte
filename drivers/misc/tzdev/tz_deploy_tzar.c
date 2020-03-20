@@ -32,12 +32,14 @@
 
 __asm__ (
   ".section .init.data,\"aw\"\n"
+  ".global tzdev_tzar_begin\n"
   "tzdev_tzar_begin:\n"
   ".incbin \"" KBUILD_SRC "/drivers/misc/tzdev/startup.tzar\"\n"
+  ".global tzdev_tzar_end\n"
   "tzdev_tzar_end:\n"
   ".previous\n"
 );
-extern char tzdev_tzar_begin[], tzdev_tzar_end[];
+extern __visible char tzdev_tzar_begin[], tzdev_tzar_end[];
 
 enum iw_startup_loader_cmd_type {
 	CMD_STARTUP_LOADER_INVALID_ID,
