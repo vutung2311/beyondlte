@@ -96,7 +96,7 @@ extern struct module __this_module;
 #define ___EXPORT_SYMBOL(sym, sec)					\
 	extern typeof(sym) sym;						\
 	__CRC_SYMBOL(sym, sec)						\
-	static const char __kstrtab_##sym[]  __used			\
+	static const char __kstrtab_##sym[]	__used			\
 	__attribute__((section("__ksymtab_strings"), aligned(1)))	\
 	= VMLINUX_SYMBOL_STR(sym);					\
 	__KSYMTAB_ENTRY(sym, sec)
