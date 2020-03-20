@@ -139,7 +139,7 @@ CHECKFLAGS	+= -D__aarch64__ -m64
 
 ifeq ($(CONFIG_ARM64_MODULE_CMODEL_LARGE), y)
 KBUILD_CFLAGS_MODULE	+= -mcmodel=large
-ifeq ($(CONFIG_LTO_CLANG), y)
+ifdef CONFIG_LTO_CLANG
 # Code model is not stored in LLVM IR, so we need to pass it also to LLVMgold
 KBUILD_LDFLAGS_MODULE	+= -plugin-opt=-code-model=large
 endif

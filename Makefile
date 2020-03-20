@@ -709,14 +709,13 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, attribute-alias)
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
 KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
-ifeq ($(CONFIG_LTO_CLANG),y)
+ifdef CONFIG_LTO_CLANG)
 ifeq ($(ld-name),lld)
 LDFLAGS += --lto-Oz
 endif
 endif
-else
-ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
-ifeq ($(CONFIG_LTO_CLANG),y)
+else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
+ifdef CONFIG_LTO_CLANG
 ifeq ($(ld-name),lld)
 LDFLAGS += --lto-O2
 endif
@@ -727,7 +726,6 @@ ifdef CONFIG_PROFILE_ALL_BRANCHES
 KBUILD_CFLAGS	+= -O2 $(call cc-disable-warning,maybe-uninitialized,)
 else
 KBUILD_CFLAGS   += -O2
-endif
 endif
 endif
 
