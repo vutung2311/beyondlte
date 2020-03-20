@@ -258,6 +258,8 @@ cleanup()
 	rm -f System.map
 	rm -f vmlinux
 	rm -f vmlinux.o
+	rm -f cc*.ltrans*.o
+	rm -f vmlinux.o.* vmlinux.ltrans* vmlinux.wpa*
 }
 
 on_exit()
