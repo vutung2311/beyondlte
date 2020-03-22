@@ -37,16 +37,6 @@ mkdir -p $OUT
 
 KERNEL_DEFCONFIG=exynos9820-beyond0lte_defconfig
 
-FUNC_CLEAN_DTB()
-{
-	if ! [ -d "${RDIR}/arch/${ARCH}/boot/dts" ] ; then
-		echo "no directory : "${RDIR}/arch/${ARCH}/boot/dts""
-	else
-		echo "rm files in : "${RDIR}/arch/${ARCH}/boot/dts/*.dtb""
-		rm "${RDIR}/arch/${ARCH}/boot/dts/exynos/*.dtb"
-	fi
-}
-
 FUNC_BUILD_KERNEL()
 {
 	echo ""
@@ -57,20 +47,19 @@ FUNC_BUILD_KERNEL()
 	echo "build common config="${KERNEL_DEFCONFIG}""
 	echo "build model config=SM-G970F"
 
-	FUNC_CLEAN_DTB
-
 	make -j$BUILD_JOB_NUMBER ARCH=$ARCH \
 			O=$OUT \
 			CROSS_COMPILE="${BUILD_CROSS_COMPILE}" \
 			CROSS_COMPILE_ARM32="${BUILD_CROSS_COMPILE_ARM32}" \
 			$KERNEL_DEFCONFIG || exit -1
 
+	cd $OUT
 	for var in "$@"
 	do
 		if [[ "$var" = "--with-lto-clang" ]] ; then
 			echo ""
 			echo "Enable LTO_CLANG"
-			./scripts/config \
+			../scripts/config \
 			-e CONFIG_LTO \
 			-e CONFIG_THINLTO \
 			-d CONFIG_LTO_NONE \
@@ -87,7 +76,7 @@ FUNC_BUILD_KERNEL()
 		if [[ "$var" = "--with-lto-gcc" ]] ; then
 			echo ""
 			echo "Enable LTO_GCC"
-			./scripts/config \
+			../scripts/config \
 			-e CONFIG_LTO \
 			-d CONFIG_LTO_NONE \
 			-e CONFIG_LTO_GCC
@@ -96,13 +85,14 @@ FUNC_BUILD_KERNEL()
 		fi
         if [[ "$var" = "--with-supersu" ]] ; then
             echo "Enable ASSISTED_SUPERUSER"
-            ./scripts/config \
+            ../scripts/config \
             -e ASSISTED_SUPERUSER
             continue
         fi
 	done
 	echo ""
 
+	cd $RDIR
 	make -j$BUILD_JOB_NUMBER ARCH=$ARCH \
 			O=$OUT \
 			CC=$CC \
@@ -120,7 +110,7 @@ FUNC_BUILD_KERNEL()
 
 FUNC_BUILD_RAMDISK()
 {
-	cp "${RDIR}/arch/${ARCH}/boot/Image" "${RDIR}/aik/split_img/boot.img-zImage"
+	cp "${OUT}/arch/${ARCH}/boot/Image" "${RDIR}/aik/split_img/boot.img-zImage"
 	cd "${RDIR}/aik"
 	./repackimg.sh --nosudo
 }
@@ -128,11 +118,11 @@ FUNC_BUILD_RAMDISK()
 FUNC_BUILD_ZIP()
 {
 	cd "${RDIR}/out/"
-	cp "${RDIR}/aik/image-new.img ${RDIR}/out/boot.img"
-	cp "${RDIR}/arch/arm64/boot/dtb.img ${RDIR}/out/dtb.img"
-	cp "${RDIR}/arch/arm64/boot/dtbo.img ${RDIR}/out/dtbo.img"
-	rm -f "${RDIR}/out/system/lib/modules/*.ko"
-	find ${RDIR} -name "*.ko" -not -path "*/out/*" -exec cp -f {} ${RDIR}/out/system/lib/modules/ \;
+	cp "${RDIR}/aik/image-new.img" "${RDIR}/out/boot.img"
+	cp "${OUT}/arch/arm64/boot/dtb.img" "${RDIR}/out/dtb.img"
+	cp "${OUT}/arch/arm64/boot/dtbo.img" "${RDIR}/out/dtbo.img"
+	rm -f "${OUT}/out/system/lib/modules/*.ko"
+	find ${OUT} -name "*.ko" -not -path "*/out/*" -exec cp -f {} "${RDIR}/out/system/lib/modules/" \;
 	cd "${RDIR}/out/" && zip "../${OUTPUT_ZIP}.zip" -r *
 }
 
@@ -147,7 +137,7 @@ rm -rf ./build.log
 
 	END_TIME=`date +%s`
 
-	let "ELAPSED_TIME=${${END_TIME}-${START_TIME}}"
+	let "ELAPSED_TIME=${END_TIME}-${START_TIME}"
 	echo "Total compile time was ${ELAPSED_TIME} seconds"
 
 ) 2>&1 | tee -a ./build.log

@@ -32,9 +32,9 @@ DTB_OBJS := $(addprefix $(obj)/dts/,$(DTB_LIST))
 
 targets += dtb.img dtbo.img
 
-DTB_CFG := $(shell find -L $(obj)/dts/ -name dtb.img.cfg)
+DTB_CFG := $(shell find -L $(srctree)/$(src)/dts/ -name dtb.img.cfg)
 
-DTBO_CFG := $(shell find -L $(obj)/dts/ -name dtbo.img.cfg)
+DTBO_CFG := $(shell find -L $(srctree)/$(src)/dts/ -name dtbo.img.cfg)
 
 $(obj)/dtb.img: $(DTB_CFG) FORCE
 	$(call if_changed,dtbtool_exynos)
@@ -60,10 +60,10 @@ ifeq ($(CONFIG_EXYNOS_SIGNATURE_BIN), y)
 	@rm $(obj)/Image
 ifeq ($(OS_INFO), x86_64)
 	@echo "64 bit signer"
-	@./tools/cslv/cslv_64 -infile $(obj)/Image_pad.bin -outfile $(obj)/Image -sign_type $(CONFIG_SB_SIGN_TYPE) -key_type $(CONFIG_SB_KEY_TYPE) -rb_count $(CONFIG_SB_RB_COUNT) -dynamic_length no
+	@$(srctree)/tools/cslv/cslv_64 -infile $(obj)/Image_pad.bin -outfile $(obj)/Image -sign_type $(CONFIG_SB_SIGN_TYPE) -key_type $(CONFIG_SB_KEY_TYPE) -rb_count $(CONFIG_SB_RB_COUNT) -dynamic_length no
 else
 	@echo "32 bit signer"
-	@./tools/cslv/cslv_32 -infile $(obj)/Image_pad.bin -outfile $(obj)/Image -sign_type $(CONFIG_SB_SIGN_TYPE) -key_type $(CONFIG_SB_KEY_TYPE) -rb_count $(CONFIG_SB_RB_COUNT) -dynamic_length no
+	@$(srctree)/tools/cslv/cslv_32 -infile $(obj)/Image_pad.bin -outfile $(obj)/Image -sign_type $(CONFIG_SB_SIGN_TYPE) -key_type $(CONFIG_SB_KEY_TYPE) -rb_count $(CONFIG_SB_RB_COUNT) -dynamic_length no
 endif
 	@rm $(obj)/Image_pad.bin
 endif

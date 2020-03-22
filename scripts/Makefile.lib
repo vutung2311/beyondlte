@@ -174,10 +174,10 @@ cpp_flags      = -Wp,-MD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
 
 ld_flags       = $(LDFLAGS) $(ldflags-y)
 
-DTC_INCLUDE    := $(srctree)/scripts/dtc/include-prefixes
+DTC_INCLUDE    := $(addprefix -I,$(srctree)/scripts/dtc/include-prefixes) $(addprefix -I,$(objtree)/include)
 
 dtc_cpp_flags  = -Wp,-MD,$(depfile).pre.tmp -nostdinc                    \
-		 $(addprefix -I,$(DTC_INCLUDE))                          \
+		 $(DTC_INCLUDE)                          \
 		 -undef -D__DTS__                                        \
 		 -DANDROID_VERSION=$(ANDROID_VERSION)                    \
 		 -DANDROID_MAJOR_VERSION=$(ANDROID_MAJOR_VERSION)
@@ -323,7 +323,7 @@ dtc-tmp = $(subst $(comma),_,$(dot-target).dts.tmp)
 # ---------------------------------------------------------------------------
 
 quiet_cmd_dtbtool_exynos = DTBTOOL $@
-cmd_dtbtool_exynos = $(objtree)/scripts/mkdtboimg/mkdtboimg.py cfg_create \
+cmd_dtbtool_exynos = $(srctree)/scripts/mkdtboimg/mkdtboimg.py cfg_create \
 		$@ $(sort $(filter-out FORCE,$^))
 
 # cat
