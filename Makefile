@@ -715,7 +715,7 @@ DISABLE_LTO_GCC := -fno-lto
 # LTO gcc creates a lot of files in TMPDIR, and with /tmp as tmpfs
 # it's easy to drive the machine OOM. Use the object directory
 # instead.
-TMPDIR ?= $(shell [ -d '$(srctree)/.lto-gcc-tmp' ] || mkdir -p '$(srctree)/.lto-gcc-tmp' && echo '$(srctree)/.lto-gcc-tmp')
+TMPDIR ?= $(shell [ -d '$(objtree)/.lto-gcc-tmp' ] || mkdir -p '$(objtree)/.lto-gcc-tmp' && echo '$(objtree)/.lto-gcc-tmp')
 export DISABLE_LTO_GCC TMPDIR LDFINAL_ko LDFINAL_modpost LDFLAGS_FINAL_modpost
 endif
 

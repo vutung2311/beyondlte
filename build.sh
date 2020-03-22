@@ -32,6 +32,7 @@ BUILD_JOB_NUMBER="$(nproc)"
 
 OUTPUT_ZIP="g970f_kernel"
 RDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+OUT="${RDIR}/.build"
 mkdir -p $OUT
 
 KERNEL_DEFCONFIG=exynos9820-beyond0lte_defconfig
@@ -59,6 +60,7 @@ FUNC_BUILD_KERNEL()
 	FUNC_CLEAN_DTB
 
 	make -j$BUILD_JOB_NUMBER ARCH=$ARCH \
+			O=$OUT \
 			CROSS_COMPILE="${BUILD_CROSS_COMPILE}" \
 			CROSS_COMPILE_ARM32="${BUILD_CROSS_COMPILE_ARM32}" \
 			$KERNEL_DEFCONFIG || exit -1
@@ -102,6 +104,7 @@ FUNC_BUILD_KERNEL()
 	echo ""
 
 	make -j$BUILD_JOB_NUMBER ARCH=$ARCH \
+			O=$OUT \
 			CC=$CC \
 			LD=$LD \
 			LDLTO=$LDLTO \
