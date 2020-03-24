@@ -634,6 +634,14 @@ config THINLTO
 	help
 	  Use ThinLTO to speed up Link Time Optimization.
 
+config LLVM_POLLY
+	bool "Use LLVM Polly (EXPERIMENTAL)"
+	depends on LTO_CLANG && ARCH_SUPPORTS_THINLTO
+	default y
+	help
+	  Use LLVM Polly to to analyze and optimize the memory access 
+	  pattern of a program.
+
 choice
 	prompt "Link-Time Optimization (LTO) (EXPERIMENTAL)"
 	default LTO_NONE

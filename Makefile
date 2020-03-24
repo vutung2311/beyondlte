@@ -744,7 +744,19 @@ endif
 else ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
 ifdef CONFIG_LTO_CLANG
 ifeq ($(ld-name),lld)
-LDFLAGS += --lto-O2
+LDFLAGS += --lto-O2 --lto-new-pass-manager
+endif
+endif
+ifeq ($(cc-name), clang)
+ifdef CONFIG_LLVM_POLLY
+KBUILD_CFLAGS	+= -mllvm -polly \
+		   -mllvm -polly-run-dce \
+		   -mllvm -polly-run-inliner \
+		   -mllvm -polly-opt-fusion=max \
+		   -mllvm -polly-ast-use-context \
+		   -mllvm -polly-detect-keep-going \
+		   -mllvm -polly-vectorizer=stripmine \
+		   -mllvm -polly-invariant-load-hoisting
 endif
 endif
 KBUILD_CFLAGS	+= -O2
@@ -840,10 +852,6 @@ KBUILD_CFLAGS += $(call cc-disable-warning, unused-result)
 KBUILD_CFLAGS += $(call cc-disable-warning, stringop-overflow)
 KBUILD_CFLAGS += $(call cc-disable-warning, sizeof-pointer-memaccess)
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
-endif
-
-ifeq ($(ld-name),lld)
-LDFLAGS += --lto-new-pass-manager
 endif
 
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
