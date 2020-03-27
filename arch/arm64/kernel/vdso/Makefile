@@ -18,6 +18,7 @@ obj-vdso   := $(obj-vdso-c) $(obj-vdso-s)
 ccflags-y := -shared -fno-common -fno-builtin -fno-stack-protector
 ccflags-y += -DDISABLE_BRANCH_PROFILING -ffixed-x18
 ccflags-y += -nostdlib -Wl,-soname=linux-vdso.so.1 -Wl,--hash-style=sysv
+ccflags-y += $(call cc-option, -fno-whole-program)
 ccflags-y += $(DISABLE_LTO)
 ifeq ($(ld-name),lld)
 ccflags-y += -fuse-ld=lld
