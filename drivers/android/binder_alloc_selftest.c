@@ -26,7 +26,7 @@
 
 static bool binder_selftest_run = true;
 static int binder_selftest_failures;
-static DEFINE_MUTEX(binder_selftest_lock);
+static DEFINE_RT_MUTEX(binder_selftest_lock);
 
 /**
  * enum buf_end_align_type - Page alignment of a buffer
@@ -294,7 +294,7 @@ void binder_selftest_alloc(struct binder_alloc *alloc)
 
 	if (!binder_selftest_run)
 		return;
-	mutex_lock(&binder_selftest_lock);
+	rt_mutex_lock(&binder_selftest_lock);
 	if (!binder_selftest_run || !alloc->vma)
 		goto done;
 	pr_info("STARTED\n");
@@ -306,5 +306,5 @@ void binder_selftest_alloc(struct binder_alloc *alloc)
 		pr_info("PASSED\n");
 
 done:
-	mutex_unlock(&binder_selftest_lock);
+	rt_mutex_unlock(&binder_selftest_lock);
 }
