@@ -930,7 +930,7 @@ lto-clang-flags	:= -flto
 endif
 lto-clang-flags += -fvisibility=hidden -fsplit-lto-unit
 
-KBUILD_LDFLAGS_MODULE += -T $(srctree)/scripts/module-lto.lds
+KBUILD_LDFLAGS_MODULE += -T $(objtree)/scripts/module-lto.lds
 
 # Limit inlining across translation units to reduce binary size
 LD_FLAGS_LTO_CLANG := -mllvm -import-instr-limit=5 \
@@ -938,7 +938,6 @@ LD_FLAGS_LTO_CLANG := -mllvm -import-instr-limit=5 \
 	-mllvm $(tune-for-small-core)
 
 LDFLAGS += $(LD_FLAGS_LTO_CLANG)
-KBUILD_LDFLAGS_MODULE += $(LD_FLAGS_LTO_CLANG)
 
 # allow disabling only clang LTO where needed
 DISABLE_LTO_CLANG := -fno-lto -fvisibility=default

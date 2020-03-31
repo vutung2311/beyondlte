@@ -35,6 +35,8 @@ PHONY += build_unifdef
 build_unifdef: $(obj)/unifdef
 	@:
 
+extra-$(CONFIG_LTO_CLANG) += module-lto.lds
+
 subdir-$(CONFIG_MODVERSIONS) += genksyms
 subdir-y                     += mod
 subdir-$(CONFIG_SECURITY_SELINUX) += selinux
