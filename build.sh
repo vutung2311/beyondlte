@@ -10,8 +10,8 @@ export KBUILD_BUILD_HOST=BuildHost
 export PLATFORM_VERSION=10.0.0
 export KBUILD_COMPILER_STRING="LLVM Clang 9.0"
 
-GCC_ARM64_BIN_PATH=$HOME/Toolchain/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin
-GCC_ARM32_BIN_PATH=$HOME/Toolchain/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin
+GCC_ARM64_BIN_PATH=$HOME/Toolchains/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin
+GCC_ARM32_BIN_PATH=$HOME/Toolchains/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin
 CLANG_BIN_PATH=/usr/lib/llvm-10/bin
 
 BUILD_CROSS_COMPILE=$GCC_ARM64_BIN_PATH/aarch64-none-linux-gnu-
