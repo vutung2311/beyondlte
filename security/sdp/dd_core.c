@@ -1942,11 +1942,11 @@ static int enforce_caller_gid(uid_t uid) {
 enforce:
 	{
 		char msg[256];
-		snprintf(msg, 128, "gid restricted uid:%d pid:%d gids:\n", uid, current->tgid);
+		scnprintf(msg, 128, "gid restricted uid:%d pid:%d gids:\n", uid, current->tgid);
 
 		for (i = 0; i < group_info->ngroups; i++) {
 			kgid_t gid = group_info->gid[i];
-			snprintf(msg, 128, "%s %d", msg, gid.val);
+			scnprintf(msg, 128, "%s %d", msg, gid.val);
 		}
 		dd_info("%s\n", msg);
 	}
@@ -2200,26 +2200,26 @@ void dd_dump(const char *msg, char *buf, int len) {
 	while(i < len) {
 		int l = (len-i > 16) ? 16 : len-i;
 
-		snprintf(logbuf, LOGBUF_MAX, "%s\t:", logbuf);
+		scnprintf(logbuf, LOGBUF_MAX, "%s\t:", logbuf);
 
 		for (j=0 ; j<l ; j++) {
-			snprintf(logbuf, LOGBUF_MAX, "%s%02hhX", logbuf, buf[i+j]);
-			if (j%2) snprintf(logbuf, LOGBUF_MAX, "%s ", logbuf);
+			scnprintf(logbuf, LOGBUF_MAX, "%s%02hhX", logbuf, buf[i+j]);
+			if (j%2) scnprintf(logbuf, LOGBUF_MAX, "%s ", logbuf);
 		}
 
 		if (l < 16)
 			for (j=0 ; j < (16-l) ; j++) {
-				snprintf(logbuf, LOGBUF_MAX, "%s  ", logbuf);
-				if (j%2) snprintf(logbuf, LOGBUF_MAX, "%s ", logbuf);
+				scnprintf(logbuf, LOGBUF_MAX, "%s  ", logbuf);
+				if (j%2) scnprintf(logbuf, LOGBUF_MAX, "%s ", logbuf);
 			}
 
-		snprintf(logbuf, LOGBUF_MAX, "%s\t\t", logbuf);
+		scnprintf(logbuf, LOGBUF_MAX, "%s\t\t", logbuf);
 
 		for (j=0 ; j<l ; j++)
-			snprintf(logbuf, LOGBUF_MAX,
+			scnprintf(logbuf, LOGBUF_MAX,
 					"%s%c", logbuf, isalnum(buf[i+j]) ? buf[i+j]:'.');
 
-		snprintf(logbuf, LOGBUF_MAX, "%s\n", logbuf);
+		scnprintf(logbuf, LOGBUF_MAX, "%s\n", logbuf);
 
 		i += l;
 	}
@@ -2259,7 +2259,7 @@ void __dd_debug(unsigned int mask,
 		vaf.fmt = fmt;
 		vaf.va = &args;
 
-		snprintf(buf, buf_len, "[%.2x:%16.s] %pV", mask, func, &vaf);
+		scnprintf(buf, buf_len, "[%.2x:%16.s] %pV", mask, func, &vaf);
 		va_end(args);
 		printk("knox-dd%s\n", buf);
 

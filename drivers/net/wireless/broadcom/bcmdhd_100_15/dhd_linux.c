@@ -5638,8 +5638,8 @@ dhd_ethtool_get_drvinfo(struct net_device *net, struct ethtool_drvinfo *info)
 {
 	dhd_info_t *dhd = DHD_DEV_INFO(net);
 
-	snprintf(info->driver, sizeof(info->driver), "wl");
-	snprintf(info->version, sizeof(info->version), "%lu", dhd->pub.drv_version);
+	scnprintf(info->driver, sizeof(info->driver), "wl");
+	scnprintf(info->version, sizeof(info->version), "%lu", dhd->pub.drv_version);
 }
 
 struct ethtool_ops dhd_ethtool_ops = {
@@ -5678,7 +5678,7 @@ dhd_ethtool(dhd_info_t *dhd, void *uaddr)
 
 		/* if dhd requested, identify ourselves */
 		if (strcmp(drvname, "?dhd") == 0) {
-			snprintf(info.driver, sizeof(info.driver), "dhd");
+			scnprintf(info.driver, sizeof(info.driver), "dhd");
 			strncpy(info.version, EPI_VERSION_STR, sizeof(info.version) - 1);
 			info.version[sizeof(info.version) - 1] = '\0';
 		}
@@ -5691,11 +5691,11 @@ dhd_ethtool(dhd_info_t *dhd, void *uaddr)
 
 		/* finally, report dongle driver type */
 		else if (dhd->pub.iswl)
-			snprintf(info.driver, sizeof(info.driver), "wl");
+			scnprintf(info.driver, sizeof(info.driver), "wl");
 		else
-			snprintf(info.driver, sizeof(info.driver), "xx");
+			scnprintf(info.driver, sizeof(info.driver), "xx");
 
-		snprintf(info.version, sizeof(info.version), "%lu", dhd->pub.drv_version);
+		scnprintf(info.version, sizeof(info.version), "%lu", dhd->pub.drv_version);
 		if (copy_to_user(uaddr, &info, sizeof(info)))
 			return -EFAULT;
 		DHD_CTL(("%s: given %*s, returning %s\n", __FUNCTION__,
@@ -6186,7 +6186,7 @@ dhd_add_monitor_if(dhd_info_t *dhd)
 
 	devname = "radiotap";
 
-	snprintf(dev->name, sizeof(dev->name), "%s%u", devname, dhd->unit);
+	scnprintf(dev->name, sizeof(dev->name), "%s%u", devname, dhd->unit);
 
 #ifndef ARPHRD_IEEE80211_PRISM  /* From Linux 2.4.18 */
 #define ARPHRD_IEEE80211_PRISM 802
@@ -11209,14 +11209,14 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 				DHD_ERROR(("Couldn't find project blob version"
 					"or New line character\n"));
 			} else if (tokenlim == '(') {
-				snprintf(clm_version,
+				scnprintf(clm_version,
 					CLM_VER_STR_LEN - 1, "%s, Blob ver = Major : %s minor : ",
 					clm_version, ver_temp_buf);
 				DHD_INFO(("[INFO]CLM/Blob version = %s\n", clm_version));
 				if ((ver_temp_buf = bcmstrtok(&ptr, "\n", &tokenlim)) == NULL) {
 					DHD_ERROR(("Couldn't find New line character\n"));
 				} else {
-					snprintf(clm_version,
+					scnprintf(clm_version,
 						strlen(clm_version) + strlen(ver_temp_buf),
 						"%s%s",	clm_version, ver_temp_buf);
 					DHD_INFO(("[INFO]CLM/Blob/project version = %s\n",
@@ -11224,10 +11224,10 @@ dhd_preinit_ioctls(dhd_pub_t *dhd)
 
 				}
 			} else if (tokenlim == '\n') {
-				snprintf(clm_version,
+				scnprintf(clm_version,
 					strlen(clm_version) + strlen(", Blob ver = Major : ") + 1,
 					"%s, Blob ver = Major : ", clm_version);
-				snprintf(clm_version,
+				scnprintf(clm_version,
 					strlen(clm_version) + strlen(ver_temp_buf) + 1,
 					"%s%s",	clm_version, ver_temp_buf);
 				DHD_INFO(("[INFO]CLM/Blob/project version = %s\n", clm_version));
@@ -15875,13 +15875,13 @@ dhd_get_memdump_filename(struct net_device *ndev, char *memdump_path, int len, c
 	clear_debug_dump_time(dhdp->debug_dump_time_str);
 	get_debug_dump_time(dhdp->debug_dump_time_str);
 #ifdef CUSTOMER_HW4_DEBUG
-	snprintf(memdump_path, len, "%s%s_%s_" "%s",
+	scnprintf(memdump_path, len, "%s%s_%s_" "%s",
 			DHD_COMMON_DUMP_PATH, fname, memdump_type, dhdp->debug_dump_time_str);
 #elif (defined(BOARD_PANDA) || defined(__ARM_ARCH_7A__))
-	snprintf(memdump_path, len, "%s%s_%s_" "%s",
+	scnprintf(memdump_path, len, "%s%s_%s_" "%s",
 			DHD_COMMON_DUMP_PATH, fname, memdump_type,  dhdp->debug_dump_time_str);
 #else
-	snprintf(memdump_path, len, "%s%s_%s_" "%s",
+	scnprintf(memdump_path, len, "%s%s_%s_" "%s",
 			DHD_COMMON_DUMP_PATH, fname, memdump_type,  dhdp->debug_dump_time_str);
 #endif /* CUSTOMER_HW4_DEBUG */
 	if (strstr(fname, "sssr_dump")) {
@@ -15907,15 +15907,15 @@ write_dump_to_file(dhd_pub_t *dhd, uint8 *buf, int size, char *fname)
 	clear_debug_dump_time(dhd->debug_dump_time_str);
 	get_debug_dump_time(dhd->debug_dump_time_str);
 #ifdef CUSTOMER_HW4_DEBUG
-	snprintf(memdump_path, sizeof(memdump_path), "%s%s_%s_" "%s",
+	scnprintf(memdump_path, sizeof(memdump_path), "%s%s_%s_" "%s",
 		DHD_COMMON_DUMP_PATH, fname, memdump_type, dhd->debug_dump_time_str);
 	file_mode = O_CREAT | O_WRONLY | O_SYNC;
 #elif (defined(BOARD_PANDA) || defined(__ARM_ARCH_7A__))
-	snprintf(memdump_path, sizeof(memdump_path), "%s%s_%s_" "%s",
+	scnprintf(memdump_path, sizeof(memdump_path), "%s%s_%s_" "%s",
 		DHD_COMMON_DUMP_PATH, fname, memdump_type,  dhd->debug_dump_time_str);
 	file_mode = O_CREAT | O_WRONLY;
 #else
-	snprintf(memdump_path, sizeof(memdump_path), "%s%s_%s_" "%s",
+	scnprintf(memdump_path, sizeof(memdump_path), "%s%s_%s_" "%s",
 		DHD_COMMON_DUMP_PATH, fname, memdump_type,  dhd->debug_dump_time_str);
 	/* Extra flags O_DIRECT and O_SYNC are required for Brix Android, as we are
 	 * calling BUG_ON immediately after collecting the socram dump.
@@ -15929,7 +15929,7 @@ write_dump_to_file(dhd_pub_t *dhd, uint8 *buf, int size, char *fname)
 		/* Check if it is live Brix image having /installmedia, else use /data */
 		if (IS_ERR(fp)) {
 			DHD_ERROR(("open file %s, try /data/\n", memdump_path));
-			snprintf(memdump_path, sizeof(memdump_path), "%s%s_%s_" "%s",
+			scnprintf(memdump_path, sizeof(memdump_path), "%s%s_%s_" "%s",
 				"/data/", fname, memdump_type,  dhd->debug_dump_time_str);
 		} else {
 			filp_close(fp, NULL);
@@ -16746,13 +16746,13 @@ void dhd_set_version_info(dhd_pub_t *dhdp, char *fw)
 {
 	int i;
 
-	i = snprintf(info_string, sizeof(info_string),
+	i = scnprintf(info_string, sizeof(info_string),
 		"  Driver: %s\n  Firmware: %s ", EPI_VERSION_STR, fw);
 
 	if (!dhdp)
 		return;
 
-	i = snprintf(&info_string[i], sizeof(info_string) - i,
+	i = scnprintf(&info_string[i], sizeof(info_string) - i,
 		"\n  Chip: %x Rev %x Pkg %x", dhd_bus_chip_id(dhdp),
 		dhd_bus_chiprev_id(dhdp), dhd_bus_chippkg_id(dhdp));
 }
@@ -17522,9 +17522,9 @@ dhd_sssr_dump_to_file(dhd_info_t* dhdinfo)
 		memset(before_sr_dump, 0, sizeof(before_sr_dump));
 		memset(after_sr_dump, 0, sizeof(after_sr_dump));
 
-		snprintf(before_sr_dump, sizeof(before_sr_dump), "%s_%d_%s",
+		scnprintf(before_sr_dump, sizeof(before_sr_dump), "%s_%d_%s",
 			"sssr_dump_core", i, "before_SR");
-		snprintf(after_sr_dump, sizeof(after_sr_dump), "%s_%d_%s",
+		scnprintf(after_sr_dump, sizeof(after_sr_dump), "%s_%d_%s",
 			"sssr_dump_core", i, "after_SR");
 
 		if (dhdp->sssr_d11_before[i] && dhdp->sssr_d11_outofreset[i] &&
@@ -17934,7 +17934,7 @@ dhd_get_time_str_len()
 	char *ts = NULL, time_str[128];
 
 	ts = dhd_log_dump_get_timestamp();
-	snprintf(time_str, sizeof(time_str),
+	scnprintf(time_str, sizeof(time_str),
 			"\n\n ========== LOG DUMP TAKEN AT : %s =========\n", ts);
 	return strlen(time_str);
 }
@@ -18265,23 +18265,23 @@ dhd_get_debug_dump_file_name(void *dev, dhd_pub_t *dhdp, char *dump_path, int si
 
 	switch (dhdp->debug_dump_subcmd) {
 	case CMD_UNWANTED:
-		snprintf(dump_path, size, "%s",
+		scnprintf(dump_path, size, "%s",
 			DHD_COMMON_DUMP_PATH DHD_DEBUG_DUMP_TYPE
 			DHD_DUMP_SUBSTR_UNWANTED);
 		break;
 	case CMD_DISCONNECTED:
-		snprintf(dump_path, size, "%s",
+		scnprintf(dump_path, size, "%s",
 			DHD_COMMON_DUMP_PATH DHD_DEBUG_DUMP_TYPE
 			DHD_DUMP_SUBSTR_DISCONNECTED);
 		break;
 	default:
-		snprintf(dump_path, size, "%s",
+		scnprintf(dump_path, size, "%s",
 			DHD_COMMON_DUMP_PATH DHD_DEBUG_DUMP_TYPE);
 	}
 
 	if (!dhdp->logdump_periodic_flush) {
 		get_debug_dump_time(dhdp->debug_dump_time_str);
-		snprintf(dump_path + strlen(dump_path),
+		scnprintf(dump_path + strlen(dump_path),
 			size - strlen(dump_path),
 			"_%s", dhdp->debug_dump_time_str);
 	}
@@ -18320,7 +18320,7 @@ dhd_get_time_str(dhd_pub_t *dhdp, char *time_str, int size)
 	char *ts = NULL;
 	memset(time_str, 0, size);
 	ts = dhd_log_dump_get_timestamp();
-	snprintf(time_str, size,
+	scnprintf(time_str, size,
 			"\n\n ========== LOG DUMP TAKEN AT : %s =========\n", ts);
 }
 
@@ -18333,7 +18333,7 @@ dhd_print_time_str(const void *user_buf, void *fp, uint32 len, void *pos)
 
 	memset_s(time_str, sizeof(time_str), 0, sizeof(time_str));
 	ts = dhd_log_dump_get_timestamp();
-	snprintf(time_str, sizeof(time_str),
+	scnprintf(time_str, sizeof(time_str),
 			"\n\n ========== LOG DUMP TAKEN AT : %s =========\n", ts);
 
 	/* write the timestamp hdr to the file first */
@@ -18718,9 +18718,9 @@ do_dhd_log_dump(dhd_pub_t *dhdp, log_dump_type_t *type)
 #if defined(CONFIG_X86)
 		DHD_ERROR(("%s: File open error on Installed android image, trying /data...\n",
 			__FUNCTION__));
-		snprintf(dump_path, sizeof(dump_path), "/data/" DHD_DEBUG_DUMP_TYPE);
+		scnprintf(dump_path, sizeof(dump_path), "/data/" DHD_DEBUG_DUMP_TYPE);
 		if (!dhdp->logdump_periodic_flush) {
-			snprintf(dump_path + strlen(dump_path),
+			scnprintf(dump_path + strlen(dump_path),
 				sizeof(dump_path) - strlen(dump_path),
 				"_%s", dhdp->debug_dump_time_str);
 		}
@@ -19112,7 +19112,7 @@ dhd_os_get_axi_error_dump_size(struct net_device *dev)
 void
 dhd_os_get_axi_error_filename(struct net_device *dev, char *dump_path, int len)
 {
-	snprintf(dump_path, len, "%s",
+	scnprintf(dump_path, len, "%s",
 		DHD_COMMON_DUMP_PATH DHD_DUMP_AXI_ERROR_FILENAME);
 }
 #endif /* DNGL_AXI_ERROR_LOGGING */
@@ -20136,7 +20136,7 @@ dhd_log_dump_write(int type, char *binary_data,
 	}
 
 	va_start(args, fmt);
-	len = vsnprintf(tmp_buf, DHD_LOG_DUMP_MAX_TEMP_BUFFER_SIZE, fmt, args);
+	len = vscnprintf(tmp_buf, DHD_LOG_DUMP_MAX_TEMP_BUFFER_SIZE, fmt, args);
 	/* Non ANSI C99 compliant returns -1,
 	 * ANSI compliant return len >= DHD_LOG_DUMP_MAX_TEMP_BUFFER_SIZE
 	 */
@@ -20192,7 +20192,7 @@ dhd_log_dump_get_timestamp(void)
 
 	ts_nsec = local_clock();
 	rem_nsec = DIV_AND_MOD_U64_BY_U32(ts_nsec, NSEC_PER_SEC);
-	snprintf(buf, sizeof(buf), "%5lu.%06lu",
+	scnprintf(buf, sizeof(buf), "%5lu.%06lu",
 		(unsigned long)ts_nsec, rem_nsec / NSEC_PER_USEC);
 
 	return buf;
@@ -20970,7 +20970,7 @@ get_debug_dump_time(char *str)
 				(sys_tz.tz_minuteswest * DHD_LOG_DUMP_TS_MULTIPLIER_VALUE));
 		rtc_time_to_tm(local_time, &tm);
 
-		snprintf(str, DEBUG_DUMP_TIME_BUF_LEN, DHD_LOG_DUMP_TS_FMT_YYMMDDHHMMSSMSMS,
+		scnprintf(str, DEBUG_DUMP_TIME_BUF_LEN, DHD_LOG_DUMP_TS_FMT_YYMMDDHHMMSSMSMS,
 				tm.tm_year - 100, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min,
 				tm.tm_sec, (int)(curtime.tv_usec/NSEC_PER_USEC));
 	}

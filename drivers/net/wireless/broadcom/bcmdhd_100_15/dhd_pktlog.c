@@ -544,26 +544,26 @@ dhd_pktlog_filter_existed(dhd_pktlog_filter_t *filter, char *arg, uint32 *id)
 		p = filter_pattern;
 		len = sizeof(filter_pattern);
 
-		nchar = snprintf(p, len, "%d ", filter->info[i].offset);
+		nchar = scnprintf(p, len, "%d ", filter->info[i].offset);
 		p += nchar;
 		len -= nchar;
 
-		nchar = snprintf(p, len, "0x");
+		nchar = scnprintf(p, len, "0x");
 		p += nchar;
 		len -= nchar;
 
 		for (j = 0; j < filter->info[i].size_bytes; j++) {
-			nchar = snprintf(p, len, "%02x", filter->info[i].mask[j]);
+			nchar = scnprintf(p, len, "%02x", filter->info[i].mask[j]);
 			p += nchar;
 			len -= nchar;
 		}
 
-		nchar = snprintf(p, len, " 0x");
+		nchar = scnprintf(p, len, " 0x");
 		p += nchar;
 		len -= nchar;
 
 		for (j = 0; j < filter->info[i].size_bytes; j++) {
-			nchar = snprintf(p, len, "%02x", filter->info[i].pattern[j]);
+			nchar = scnprintf(p, len, "%02x", filter->info[i].pattern[j]);
 			p += nchar;
 			len -= nchar;
 		}
@@ -752,26 +752,26 @@ dhd_pktlog_filter_info(dhd_pktlog_filter_t *filter)
 		p = filter_pattern;
 		len = sizeof(filter_pattern);
 
-		nchar = snprintf(p, len, "%d ", filter->info[i].offset);
+		nchar = scnprintf(p, len, "%d ", filter->info[i].offset);
 		p += nchar;
 		len -= nchar;
 
-		nchar = snprintf(p, len, "0x");
+		nchar = scnprintf(p, len, "0x");
 		p += nchar;
 		len -= nchar;
 
 		for (j = 0; j < filter->info[i].size_bytes; j++) {
-			nchar = snprintf(p, len, "%02x", filter->info[i].mask[j]);
+			nchar = scnprintf(p, len, "%02x", filter->info[i].mask[j]);
 			p += nchar;
 			len -= nchar;
 		}
 
-		nchar = snprintf(p, len, " 0x");
+		nchar = scnprintf(p, len, " 0x");
 		p += nchar;
 		len -= nchar;
 
 		for (j = 0; j < filter->info[i].size_bytes; j++) {
-			nchar = snprintf(p, len, "%02x", filter->info[i].pattern[j]);
+			nchar = scnprintf(p, len, "%02x", filter->info[i].pattern[j]);
 			p += nchar;
 			len -= nchar;
 		}
@@ -977,23 +977,23 @@ void dhd_pktlog_get_filename(dhd_pub_t *dhdp, char *dump_path, int len)
 
 	if (dhdp->memdump_type == DUMP_TYPE_BY_SYSDUMP) {
 		if (dhdp->debug_dump_subcmd == CMD_UNWANTED) {
-			snprintf(dump_path, len, "%s",
+			scnprintf(dump_path, len, "%s",
 					DHD_PKTLOG_DUMP_PATH DHD_PKTLOG_DUMP_TYPE
 					DHD_DUMP_SUBSTR_UNWANTED);
 		} else if (dhdp->debug_dump_subcmd == CMD_DISCONNECTED) {
-			snprintf(dump_path, len, "%s",
+			scnprintf(dump_path, len, "%s",
 					DHD_PKTLOG_DUMP_PATH DHD_PKTLOG_DUMP_TYPE
 					DHD_DUMP_SUBSTR_DISCONNECTED);
 		} else {
-			snprintf(dump_path, len, "%s",
+			scnprintf(dump_path, len, "%s",
 					DHD_PKTLOG_DUMP_PATH DHD_PKTLOG_DUMP_TYPE);
 		}
 	} else {
-		snprintf(dump_path, len, "%s",
+		scnprintf(dump_path, len, "%s",
 				DHD_PKTLOG_DUMP_PATH DHD_PKTLOG_DUMP_TYPE);
 
 	}
-	snprintf(dump_path, len, "%s_" "%s"
+	scnprintf(dump_path, len, "%s_" "%s"
 			".pcap", dump_path,
 			dhdp->debug_dump_time_pktlog_str);
 	DHD_ERROR(("%s: pktlog path = %s%s\n", __FUNCTION__, dump_path, FILE_NAME_HAL_TAG));

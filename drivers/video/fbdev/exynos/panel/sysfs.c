@@ -58,7 +58,7 @@ static ssize_t isc_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%u\n",
+	scnprintf(buf, PAGE_SIZE, "%u\n",
 			panel_data->props.isc_threshold);
 
 	return strlen(buf);
@@ -102,7 +102,7 @@ static ssize_t isc_store(struct device *dev,
 int print_stm_info(u8 *stm_field, char *buf)
 {
 #if 1
-	snprintf(buf, PAGE_SIZE, "CTRL EN=%d, MAX_OPT=%d, DEFAULT_OPT=%d, DIM_STEP=%d, FRAME_PERIOD=%d, MIN_SECT=%d, PIXEL_PERIOD=%d, LINE_PERIOD=%d, MIN_MOVE=%d, M_THRES=%d, V_THRES=%d \n",
+	scnprintf(buf, PAGE_SIZE, "CTRL EN=%d, MAX_OPT=%d, DEFAULT_OPT=%d, DIM_STEP=%d, FRAME_PERIOD=%d, MIN_SECT=%d, PIXEL_PERIOD=%d, LINE_PERIOD=%d, MIN_MOVE=%d, M_THRES=%d, V_THRES=%d \n",
 	stm_field[STM_CTRL_EN], stm_field[STM_MAX_OPT], stm_field[STM_DEFAULT_OPT],
 	stm_field[STM_DIM_STEP], stm_field[STM_FRAME_PERIOD], stm_field[STM_MIN_SECT], stm_field[STM_PIXEL_PERIOD],
 	stm_field[STM_LINE_PERIOD], stm_field[STM_MIN_MOVE], stm_field[STM_M_THRES], stm_field[STM_V_THRES]);
@@ -188,11 +188,11 @@ static ssize_t read_mtp_show(struct device *dev,
 		return -EINVAL;
 	}
 
-	len = snprintf(buf, PAGE_SIZE,
+	len = scnprintf(buf, PAGE_SIZE,
 			"addr:0x%02X pos:%d size:%d\n",
 			readreg, readpos, readlen);
 	for (i = 0; i < readlen; i++)
-		len += snprintf(buf + len, PAGE_SIZE - len, "0x%02X%s", readbuf[i],
+		len += scnprintf(buf + len, PAGE_SIZE - len, "0x%02X%s", readbuf[i],
 				(((i + 1) % 16) == 0) || (i == readlen - 1) ? "\n" : " ");
 
 	readreg = 0;
@@ -343,7 +343,7 @@ static ssize_t gamma_interpolation_test_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 	if (panel_data->props.gamma_control_buf != NULL) {
-		snprintf(buf, PAGE_SIZE, "%x %x %x %x %x %x \n",
+		scnprintf(buf, PAGE_SIZE, "%x %x %x %x %x %x \n",
 			panel_data->props.gamma_control_buf[0], panel_data->props.gamma_control_buf[1],
 			panel_data->props.gamma_control_buf[2], panel_data->props.gamma_control_buf[3],
 			panel_data->props.gamma_control_buf[4], panel_data->props.gamma_control_buf[5]);
@@ -402,7 +402,7 @@ int fingerprint_value = -1;
 static ssize_t fingerprint_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	snprintf(buf, PAGE_SIZE, "%u\n", fingerprint_value);
+	scnprintf(buf, PAGE_SIZE, "%u\n", fingerprint_value);
 
 	return strlen(buf);
 }
@@ -436,7 +436,7 @@ static ssize_t lcd_type_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "SDC_%02X%02X%02X\n",
+	scnprintf(buf, PAGE_SIZE, "SDC_%02X%02X%02X\n",
 			panel_data->id[0], panel_data->id[1], panel_data->id[2]);
 
 	return strlen(buf);
@@ -454,7 +454,7 @@ static ssize_t window_type_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%02x %02x %02x\n",
+	scnprintf(buf, PAGE_SIZE, "%02x %02x %02x\n",
 			panel_data->id[0], panel_data->id[1], panel_data->id[2]);
 	pr_info("%s %02x %02x %02x\n",
 			__func__, panel_data->id[0], panel_data->id[1], panel_data->id[2]);
@@ -476,7 +476,7 @@ static ssize_t manufacture_code_show(struct device *dev,
 
 	resource_copy_by_name(panel_data, code, "code");
 
-	snprintf(buf, PAGE_SIZE, "%02X%02X%02X%02X%02X\n",
+	scnprintf(buf, PAGE_SIZE, "%02X%02X%02X%02X%02X\n",
 		code[0], code[1], code[2], code[3], code[4]);
 
 	return strlen(buf);
@@ -504,7 +504,7 @@ static ssize_t cell_id_show(struct device *dev,
 	resource_copy_by_name(panel_data, date, "date");
 	resource_copy_by_name(panel_data, coordinate, "coordinate");
 
-	snprintf(buf, PAGE_SIZE, "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X\n",
+	scnprintf(buf, PAGE_SIZE, "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X\n",
 		date[0] , date[1], date[2], date[3], date[4], date[5], date[6],
 		coordinate[0], coordinate[1], coordinate[2], coordinate[3]);
 
@@ -551,13 +551,13 @@ static ssize_t octa_id_show(struct device *dev,
 		}
 	}
 
-	len += snprintf(buf + len, PAGE_SIZE - len, "%d%d%d%02x%02x",
+	len += scnprintf(buf + len, PAGE_SIZE - len, "%d%d%d%02x%02x",
 			site, rework, poc, octa_id[2], octa_id[3]);
 	if (cell_id_exist) {
 		for (i = 0; i < 16; i++)
-			len += snprintf(buf + len, PAGE_SIZE - len, "%c", cell_id[i]);
+			len += scnprintf(buf + len, PAGE_SIZE - len, "%c", cell_id[i]);
 	}
-	len += snprintf(buf + len, PAGE_SIZE - len, "\n");
+	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
 
 	return strlen(buf);
 }
@@ -583,7 +583,7 @@ static ssize_t color_coordinate_show(struct device *dev,
 
 	resource_copy_by_name(panel_data, coordinate, "coordinate");
 
-	snprintf(buf, PAGE_SIZE, "%u, %u\n", /* X, Y */
+	scnprintf(buf, PAGE_SIZE, "%u, %u\n", /* X, Y */
 			coordinate[0] << 8 | coordinate[1],
 			coordinate[2] << 8 | coordinate[3]);
 	return strlen(buf);
@@ -611,7 +611,7 @@ static ssize_t manufacture_date_show(struct device *dev,
 	hour = date[2] & 0x1F;
 	min = date[3] & 0x3F;
 
-	snprintf(buf, PAGE_SIZE, "%d, %d, %d, %d:%d\n",
+	scnprintf(buf, PAGE_SIZE, "%d, %d, %d, %d:%d\n",
 			year, month, day, hour, min);
 	return strlen(buf);
 }
@@ -638,14 +638,14 @@ static ssize_t brightness_table_show(struct device *dev,
 	for (br = 0; br <= max_brightness; br++) {
 		actual_brightness = get_actual_brightness(panel_bl, br);
 		if (recv_len == 0) {
-			recv_len += snprintf(recv_buf, recv_buf_len, "%5d", prev_br);
+			recv_len += scnprintf(recv_buf, recv_buf_len, "%5d", prev_br);
 			prev_actual_brightness = actual_brightness;
 		}
 		if ((prev_actual_brightness != actual_brightness) || (br == max_brightness))  {
 			if (recv_len < recv_buf_len) {
-				recv_len += snprintf(recv_buf + recv_len, recv_buf_len - recv_len,
+				recv_len += scnprintf(recv_buf + recv_len, recv_buf_len - recv_len,
 					"~%5d %3d\n", prev_br, prev_actual_brightness);
-				len += snprintf(buf + len, PAGE_SIZE - len, "%s", recv_buf);
+				len += scnprintf(buf + len, PAGE_SIZE - len, "%s", recv_buf);
 			}
 			recv_len = 0;
 			memset(recv_buf, 0x00, sizeof(recv_buf));
@@ -658,7 +658,7 @@ static ssize_t brightness_table_show(struct device *dev,
 			goto exit;
 		}
 	}
-	len += snprintf(buf + len, PAGE_SIZE - len, "%s", recv_buf);
+	len += scnprintf(buf + len, PAGE_SIZE - len, "%s", recv_buf);
 exit:
 	mutex_unlock(&panel_bl->lock);
 
@@ -677,7 +677,7 @@ static ssize_t adaptive_control_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%d\n",
+	scnprintf(buf, PAGE_SIZE, "%d\n",
 			panel_data->props.adaptive_control);
 
 	return strlen(buf);
@@ -735,7 +735,7 @@ static ssize_t siop_enable_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%u\n",
+	scnprintf(buf, PAGE_SIZE, "%u\n",
 			panel_data->props.siop_enable);
 
 	return strlen(buf);
@@ -820,7 +820,7 @@ static ssize_t mcd_mode_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%u\n", panel_data->props.mcd_on);
+	scnprintf(buf, PAGE_SIZE, "%u\n", panel_data->props.mcd_on);
 
 	return strlen(buf);
 }
@@ -866,12 +866,12 @@ static void print_mcd_resistance(u8 *mcd_nok, int size)
 	int code, len;
 	char buf[1024];
 
-	len = snprintf(buf, sizeof(buf),
+	len = scnprintf(buf, sizeof(buf),
 			"MCD CHECK [b7:MCD1_R, b6:MCD2_R, b3:MCD1_L, b2:MCD2_L]\n");
 	for (code = 0; code < size; code++) {
 		if (!(code % 0x10))
-			len += snprintf(buf + len, sizeof(buf) - len, "[%02X] ", code);
-		len += snprintf(buf + len, sizeof(buf) - len, "%02X%s",
+			len += scnprintf(buf + len, sizeof(buf) - len, "[%02X] ", code);
+		len += scnprintf(buf + len, sizeof(buf) - len, "%02X%s",
 			   	mcd_nok[code], (!((code + 1) % 0x10)) ? "\n" : " ");
 	}
 	pr_info("%s\n", buf);
@@ -967,13 +967,13 @@ static ssize_t mcd_resistance_show(struct device *dev,
 	panel_data = &panel->panel_data;
 	mutex_lock(&panel->op_lock);
 	for (i = 0; i < MAX_MCD_RS; i++)
-		len += snprintf(buf + len, PAGE_SIZE - len,
+		len += scnprintf(buf + len, PAGE_SIZE - len,
 				"SDC_%s:%d%s", mcd_rs_name[i],
 				panel_data->props.mcd_rs_flash_range[i][1],
 				(i != MAX_MCD_RS - 1) ? " " : "\n");
 
 	for (i = 0; i < MAX_MCD_RS; i++)
-		len += snprintf(buf + len, PAGE_SIZE - len,
+		len += scnprintf(buf + len, PAGE_SIZE - len,
 				"%s:%d%s", mcd_rs_name[i],
 				panel_data->props.mcd_rs_range[i][1],
 				(i != MAX_MCD_RS - 1) ? " " : "\n");
@@ -1069,7 +1069,7 @@ static ssize_t irc_mode_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%u\n", panel_data->props.irc_mode);
+	scnprintf(buf, PAGE_SIZE, "%u\n", panel_data->props.irc_mode);
 
 	return strlen(buf);
 }
@@ -1153,7 +1153,7 @@ static ssize_t partial_disp_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%d\n", panel_data->props.panel_partial_disp);
+	scnprintf(buf, PAGE_SIZE, "%d\n", panel_data->props.panel_partial_disp);
 
 	return strlen(buf);
 }
@@ -1264,15 +1264,15 @@ static ssize_t self_mask_check_show(struct device *dev,
 				break;
 			}
 		}
-		len = snprintf(buf, PAGE_SIZE, "%d", success_check);
+		len = scnprintf(buf, PAGE_SIZE, "%d", success_check);
 		for (i = 0; i < aod->props.self_mask_checksum_len; i++) {
-			len += snprintf(buf + len, PAGE_SIZE - len, " %02x", recv_checksum[i]);
+			len += scnprintf(buf + len, PAGE_SIZE - len, " %02x", recv_checksum[i]);
 		}
-		len += snprintf(buf + len, PAGE_SIZE - len, "\n", recv_checksum[i]);
+		len += scnprintf(buf + len, PAGE_SIZE - len, "\n", recv_checksum[i]);
 		if (recv_checksum)
 			kfree(recv_checksum);
 	} else {
-		snprintf(buf, PAGE_SIZE, "-1\n");
+		scnprintf(buf, PAGE_SIZE, "-1\n");
 	}
 	return strlen(buf);
 }
@@ -1291,7 +1291,7 @@ static ssize_t mst_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%u\n",
+	scnprintf(buf, PAGE_SIZE, "%u\n",
 			panel_data->props.mst_on);
 
 	return strlen(buf);
@@ -1398,7 +1398,7 @@ static ssize_t gct_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%u 0x%x\n",
+	scnprintf(buf, PAGE_SIZE, "%u 0x%x\n",
 			gct_chksum_is_valid(panel) ? 1 : 0,
 			*(u32 *)checksum);
 
@@ -1562,7 +1562,7 @@ static ssize_t xtalk_mode_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%u\n",
+	scnprintf(buf, PAGE_SIZE, "%u\n",
 			panel_data->props.xtalk_mode);
 
 	return strlen(buf);
@@ -1640,7 +1640,7 @@ static ssize_t poc_show(struct device *dev,
 	}
 	panel_wake_unlock(panel);
 
-	snprintf(buf, PAGE_SIZE, "%d %d %02x\n", poc_info->poc,
+	scnprintf(buf, PAGE_SIZE, "%d %d %02x\n", poc_info->poc,
 			poc_info->poc_chksum[4], poc_info->poc_ctrl[3]);
 
 	dev_info(dev, "%s poc:%d chk:%d gray:%02x\n", __func__, poc_info->poc,
@@ -1762,7 +1762,7 @@ static ssize_t poc_mca_show(struct device *dev,
 	len = get_resource_size_by_name(&panel->panel_data, "poc_mca_chksum");
 	buf[0] = '\0';
 	for (i = 0; i < len; i++) {
-		snprintf(buf, PAGE_SIZE, "%s%02X ", buf, chksum_data[i]);
+		scnprintf(buf, PAGE_SIZE, "%s%02X ", buf, chksum_data[i]);
 	}
 
 	dev_info(dev, "%s poc_mca_checksum: %s\n", __func__, buf);
@@ -1792,7 +1792,7 @@ static ssize_t poc_info_show(struct device *dev,
 		return ret;
 	}
 
-	snprintf(buf, PAGE_SIZE, "poc_mca_image_size %d\n", ret);
+	scnprintf(buf, PAGE_SIZE, "poc_mca_image_size %d\n", ret);
 
 	dev_info(dev, "%s: %s\n", __func__, buf);
 
@@ -1843,7 +1843,7 @@ static ssize_t gamma_flash_show(struct device *dev,
 			calc_checksum_16bit(result->mtp_reg, sizeof(result->mtp_reg)),
 			result->mtp_chksum_by_calc, result->mtp_chksum_by_read);
 
-	return snprintf(buf, PAGE_SIZE, "%d %08X %08X %08X %08X %08X\n",
+	return scnprintf(buf, PAGE_SIZE, "%d %08X %08X %08X %08X %08X\n",
 			ret, result->dim_chksum_by_calc, result->dim_chksum_by_read,
 			calc_checksum_16bit(result->mtp_reg, sizeof(result->mtp_reg)),
 			result->mtp_chksum_by_calc, result->mtp_chksum_by_read);
@@ -1893,7 +1893,7 @@ static ssize_t grayspot_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%u\n",
+	scnprintf(buf, PAGE_SIZE, "%u\n",
 			panel_data->props.grayspot);
 
 	return strlen(buf);
@@ -1952,9 +1952,9 @@ static ssize_t hmt_bright_show(struct device *dev,
 	panel_bl = &panel->panel_bl;
 	mutex_lock(&panel_bl->lock);
 	if (panel_bl->props.id == PANEL_BL_SUBDEV_TYPE_DISP) {
-		size = snprintf(buf, 30, "HMD off state\n");
+		size = scnprintf(buf, 30, "HMD off state\n");
 	} else {
-		size = snprintf(buf, PAGE_SIZE, "index : %d, brightenss : %d\n",
+		size = scnprintf(buf, PAGE_SIZE, "index : %d, brightenss : %d\n",
 				panel_bl->props.actual_brightness_index,
 				BRT_USER(panel_bl->props.brightness));
 	}
@@ -2019,7 +2019,7 @@ static ssize_t hmt_on_show(struct device *dev,
 	}
 	state = &panel->state;
 
-	snprintf(buf, PAGE_SIZE, "%u\n", state->hmd_on);
+	scnprintf(buf, PAGE_SIZE, "%u\n", state->hmd_on);
 
 	return strlen(buf);
 }
@@ -2227,7 +2227,7 @@ static ssize_t alpm_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%d\n", panel_data->props.alpm_mode);
+	scnprintf(buf, PAGE_SIZE, "%d\n", panel_data->props.alpm_mode);
 	panel_dbg("%s: %d\n", __func__, panel_data->props.alpm_mode);
 
 	return strlen(buf);
@@ -2283,9 +2283,9 @@ static ssize_t conn_det_show(struct device *dev,
 	}
 
 	if (panel_gpio_valid(&panel->gpio[PANEL_GPIO_CONN_DET]))
-		snprintf(buf, PAGE_SIZE, "%s\n", ub_con_disconnected(panel) ? "disconnected" : "connected");
+		scnprintf(buf, PAGE_SIZE, "%s\n", ub_con_disconnected(panel) ? "disconnected" : "connected");
 	else
-		snprintf(buf, PAGE_SIZE, "%d\n", -1);
+		scnprintf(buf, PAGE_SIZE, "%d\n", -1);
 	pr_info("%s %s", __func__, buf);
 	return strlen(buf);
 }
@@ -2330,7 +2330,7 @@ static ssize_t lpm_opr_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%d\n", panel_data->props.lpm_opr);
+	scnprintf(buf, PAGE_SIZE, "%d\n", panel_data->props.lpm_opr);
 
 	return strlen(buf);
 }
@@ -2436,18 +2436,18 @@ static void show_brt_param(struct panel_info *panel_data, int id, int type)
 		return;
 
 	line[count++] = buf;
-	len = snprintf(buf, SZ_1K, "Brightness");
+	len = scnprintf(buf, SZ_1K, "Brightness");
 	for (ires = 0; ires < ARRAY_SIZE(brt_res_names); ires++) {
 		res = find_panel_resource(panel_data, brt_res_names[ires]);
 		size = get_panel_resource_size(res);
 		if (!strncmp(brt_res_names[ires], "elvss_t", 8))
 			for (itemp = 0; itemp < ARRAY_SIZE(temperatures); itemp++)
-				len += snprintf(buf + len, SZ_1K - len, ",%selvss(T:%d)",
+				len += scnprintf(buf + len, SZ_1K - len, ",%selvss(T:%d)",
 						(id == PANEL_BL_SUBDEV_TYPE_HMD) ? "hmd_" : "",
 						temperatures[itemp]);
 		else
 			for (num = 0; num < size; num++)
-				len += snprintf(buf + len, SZ_1K - len, ",%s%s_%d",
+				len += scnprintf(buf + len, SZ_1K - len, ",%s%s_%d",
 						(id == PANEL_BL_SUBDEV_TYPE_HMD) ? "hmd_" : "",
 						brt_res_names[ires], (1 + num + res->resui->rditbl->offset));
 	}
@@ -2477,7 +2477,7 @@ static void show_brt_param(struct panel_info *panel_data, int id, int type)
 			break;
 
 		line[count++] = buf;
-		len = snprintf(buf, SZ_1K, "%3d", tbl[i]);
+		len = scnprintf(buf, SZ_1K, "%3d", tbl[i]);
 
 		panel_set_key(panel, 3, true);
 		/* store temperature */
@@ -2504,7 +2504,7 @@ static void show_brt_param(struct panel_info *panel_data, int id, int type)
 					}
 
 					resource_copy(reg_val, res);
-					len += snprintf(buf + len, SZ_1K - len, ",0x%02X",
+					len += scnprintf(buf + len, SZ_1K - len, ",0x%02X",
 							reg_val[0]);
 				}
 			} else {
@@ -2516,7 +2516,7 @@ static void show_brt_param(struct panel_info *panel_data, int id, int type)
 				}
 				resource_copy(reg_val, res);
 				for (num = 0; num < size; num++)
-					len += snprintf(buf + len, SZ_1K - len, ",0x%02X",
+					len += scnprintf(buf + len, SZ_1K - len, ",0x%02X",
 							reg_val[num]);
 			}
 		}
@@ -2547,7 +2547,7 @@ static void show_brt_param(struct panel_info *panel_data, int id, int type)
 	if (buf) {
 		len = 0;
 		for (i = 0; i < count; i++)
-			len += snprintf(buf + len,
+			len += scnprintf(buf + len,
 					SZ_1K * count - len, "%s\n", line[i]);
 		buffer_backup(buf, len, (char *)path[id]);
 		kfree(buf);
@@ -2612,7 +2612,7 @@ static void show_aid_log(struct panel_info *panel_data, int id)
 		}
 
 		line[count++] = buf;
-		len = snprintf(buf, SZ_1K, "[MAPTBL:%s]", tbl_names[i]);
+		len = scnprintf(buf, SZ_1K, "[MAPTBL:%s]", tbl_names[i]);
 		for_each_layer(tbl, layer) {
 			for_each_row(tbl, row) {
 				buf = kmalloc(SZ_1K, GFP_KERNEL);
@@ -2622,10 +2622,10 @@ static void show_aid_log(struct panel_info *panel_data, int id)
 				}
 
 				line[count++] = buf;
-				len = snprintf(buf, SZ_1K, "lum[%3d] : ",
+				len = scnprintf(buf, SZ_1K, "lum[%3d] : ",
 						subdev->brt_tbl.lum[row]);
 				for_each_col(tbl, col)
-					len += snprintf(buf + len, SZ_1K - len, "%02X ",
+					len += scnprintf(buf + len, SZ_1K - len, "%02X ",
 							tbl->arr[row * sizeof_row(tbl) + col]);
 			}
 		}
@@ -2685,10 +2685,10 @@ static void show_aid_log(struct panel_info *panel_data, int id)
 		pr_info("[GAMMA MAPTBL] HEXA-DECIMAL\n");
 		for_each_layer(tbl, layer) {
 			for_each_row(tbl, row) {
-				len = snprintf(buf, sizeof(buf), "gamma[%3d] : ",
+				len = scnprintf(buf, sizeof(buf), "gamma[%3d] : ",
 						subdev->brt_tbl.lum[row]);
 				for_each_col(tbl, col)
-					len += snprintf(buf + len, sizeof(buf) - len, "%02X ",
+					len += scnprintf(buf + len, sizeof(buf) - len, "%02X ",
 							tbl->arr[row * sizeof_row(tbl) + col]);
 				pr_info("%s\n", buf);
 			}
@@ -2707,22 +2707,22 @@ static void show_aid_log(struct panel_info *panel_data, int id)
 	panel_info("\n[BRIGHTNESS, %s %s %s %s table]\n",
 			aor_tbl ? "AOR" : "", vint_tbl ? "VINT" : "",
 			elvss_tbl ? "ELVSS" : "", irc_tbl ? "IRC" : "");
-	len = snprintf(buf, sizeof(buf), "[idx] platform   luminance  ");
+	len = scnprintf(buf, sizeof(buf), "[idx] platform   luminance  ");
 	if (aor_tbl)
-		len += snprintf(buf + len, sizeof(buf) - len, "|  aor  ");
+		len += scnprintf(buf + len, sizeof(buf) - len, "|  aor  ");
 	if (vint_tbl)
-		len += snprintf(buf + len, sizeof(buf) - len,
+		len += scnprintf(buf + len, sizeof(buf) - len,
 				"| vint ");
 	if (elvss_tbl)
-		len += snprintf(buf + len, sizeof(buf) - len,
+		len += scnprintf(buf + len, sizeof(buf) - len,
 				"|  elvss   ");
 	if (irc_tbl)
-		len += snprintf(buf + len, sizeof(buf) - len,
+		len += scnprintf(buf + len, sizeof(buf) - len,
 				"| ====================== irc =======================");
 	pr_info("%s\n", buf);
 
 	for (i = 0; i < subdev->brt_tbl.sz_brt_to_step; i++) {
-		len = snprintf(buf, sizeof(buf),
+		len = scnprintf(buf, sizeof(buf),
 				"[%3d]   %-5d   %3d(%3d.%02d) ",
 				i, subdev->brt_tbl.brt_to_step[i],
 				get_subdev_actual_brightness(panel_bl, id,
@@ -2732,31 +2732,31 @@ static void show_aid_log(struct panel_info *panel_data, int id)
 				get_subdev_actual_brightness_interpolation(panel_bl, id,
 					subdev->brt_tbl.brt_to_step[i]) % 100);
 		if (aor_tbl) {
-			len += snprintf(buf + len, sizeof(buf) - len, "| ");
+			len += scnprintf(buf + len, sizeof(buf) - len, "| ");
 			for_each_col(aor_tbl, col)
-				len += snprintf(buf + len, sizeof(buf) - len, "%02X ",
+				len += scnprintf(buf + len, sizeof(buf) - len, "%02X ",
 						aor_tbl->arr[i * sizeof_row(aor_tbl) + col]);
 		}
 
 		if (vint_tbl) {
-			len += snprintf(buf + len, sizeof(buf) - len, "| ");
+			len += scnprintf(buf + len, sizeof(buf) - len, "| ");
 			for_each_col(vint_tbl, col)
-				len += snprintf(buf + len, sizeof(buf) - len, " %02X  ",
+				len += scnprintf(buf + len, sizeof(buf) - len, " %02X  ",
 						vint_tbl->arr[i * sizeof_row(vint_tbl) + col]);
 		}
 
 		if (elvss_tbl) {
-			len += snprintf(buf + len, sizeof(buf) - len, "| ");
+			len += scnprintf(buf + len, sizeof(buf) - len, "| ");
 			for_each_layer(elvss_tbl, layer)
 			for_each_col(elvss_tbl, col)
-				len += snprintf(buf + len, sizeof(buf) - len, "%02X ",
+				len += scnprintf(buf + len, sizeof(buf) - len, "%02X ",
 						elvss_tbl->arr[maptbl_index(elvss_tbl, layer, i, col)]);
 		}
 
 		if (irc_tbl) {
-			len += snprintf(buf + len, sizeof(buf) - len, "| ");
+			len += scnprintf(buf + len, sizeof(buf) - len, "| ");
 			for_each_col(irc_tbl, col)
-				len += snprintf(buf + len, sizeof(buf) - len, "%02X ",
+				len += scnprintf(buf + len, sizeof(buf) - len, "%02X ",
 						irc_tbl->arr[i * sizeof_row(irc_tbl) + col]);
 		}
 
@@ -2822,7 +2822,7 @@ static ssize_t lux_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%d\n", panel_data->props.lux);
+	scnprintf(buf, PAGE_SIZE, "%d\n", panel_data->props.lux);
 
 	return strlen(buf);
 }
@@ -2928,21 +2928,21 @@ static ssize_t read_copr_show(struct device *dev,
 
 	if (!IS_PANEL_ACTIVE(panel)) {
 		panel_err("%s:panel is not active\n", __func__);
-		return snprintf(buf, PAGE_SIZE, "-1\n");
+		return scnprintf(buf, PAGE_SIZE, "-1\n");
 	}
 
 	if (!copr_is_enabled(copr)) {
 		panel_err("%s copr is off state\n", __func__);
-		return snprintf(buf, PAGE_SIZE, "-1\n");
+		return scnprintf(buf, PAGE_SIZE, "-1\n");
 	}
 
 	cur_copr = copr_get_value(copr);
 	if (cur_copr < 0) {
 		panel_err("%s failed to get copr\n", __func__);
-		return snprintf(buf, PAGE_SIZE, "-1\n");
+		return scnprintf(buf, PAGE_SIZE, "-1\n");
 	}
 
-	return snprintf(buf, PAGE_SIZE, "%d\n", cur_copr);
+	return scnprintf(buf, PAGE_SIZE, "%d\n", cur_copr);
 }
 
 static ssize_t copr_roi_store(struct device *dev,
@@ -3033,24 +3033,24 @@ static ssize_t copr_roi_show(struct device *dev,
 
 	if (!copr_is_enabled(copr)) {
 		panel_err("%s copr is off state\n", __func__);
-		return snprintf(buf, PAGE_SIZE, "-1\n");
+		return scnprintf(buf, PAGE_SIZE, "-1\n");
 	}
 
 	if (!IS_PANEL_ACTIVE(panel)) {
 		panel_err("%s:panel is not active\n", __func__);
-		return snprintf(buf, PAGE_SIZE, "-1\n");
+		return scnprintf(buf, PAGE_SIZE, "-1\n");
 	}
 
 	ret = copr_roi_get_value(copr, copr->props.roi,
 			copr->props.nr_roi, out);
 	if (ret < 0) {
 		panel_err("%s failed to get copr\n", __func__);
-		return snprintf(buf, PAGE_SIZE, "-1\n");
+		return scnprintf(buf, PAGE_SIZE, "-1\n");
 	}
 
 	for (i = 0; i < copr->props.nr_roi; i++) {
 		for (c = 0; c < 3; c++) {
-			len += snprintf(buf + len, PAGE_SIZE - len,
+			len += scnprintf(buf + len, PAGE_SIZE - len,
 					"%d%s", out[i * 3 + c],
 					((i == copr->props.nr_roi -1) && c == 2) ? "\n" : " ");
 		}
@@ -3068,16 +3068,16 @@ static ssize_t brt_avg_show(struct device *dev,
 
 	if (!IS_PANEL_ACTIVE(panel)) {
 		panel_err("%s:panel is not active\n", __func__);
-		return snprintf(buf, PAGE_SIZE, "-1\n");
+		return scnprintf(buf, PAGE_SIZE, "-1\n");
 	}
 
 	brt_avg = panel_bl_get_average_and_clear(panel_bl, 1);
 	if (brt_avg < 0) {
 		panel_err("%s failed to get average brt1\n", __func__);
-		return snprintf(buf, PAGE_SIZE, "-1\n");
+		return scnprintf(buf, PAGE_SIZE, "-1\n");
 	}
 
-	return snprintf(buf, PAGE_SIZE, "%d\n", brt_avg);
+	return scnprintf(buf, PAGE_SIZE, "%d\n", brt_avg);
 }
 #endif
 
@@ -3210,7 +3210,7 @@ static ssize_t poc_onoff_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%d\n", panel_data->props.poc_onoff);
+	scnprintf(buf, PAGE_SIZE, "%d\n", panel_data->props.poc_onoff);
 
 	return strlen(buf);
 }
@@ -3263,7 +3263,7 @@ static ssize_t self_mask_show(struct device *dev,
 	aod = &panel->aod;
 	props = &aod->props;
 
-	snprintf(buf, PAGE_SIZE, "%d\n", props->self_mask_en);
+	scnprintf(buf, PAGE_SIZE, "%d\n", props->self_mask_en);
 
 	return strlen(buf);
 }
@@ -3331,7 +3331,7 @@ static ssize_t self_move_show(struct device *dev,
 	aod = &panel->aod;
 	props = &aod->props;
 
-	snprintf(buf, PAGE_SIZE, "%d\n", props->self_move_pattern);
+	scnprintf(buf, PAGE_SIZE, "%d\n", props->self_move_pattern);
 
 	return strlen(buf);
 }
@@ -3382,7 +3382,7 @@ static ssize_t self_move_store(struct device *dev,
 static ssize_t isc_defect_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	snprintf(buf, PAGE_SIZE, "support isc defect checkd\n");
+	scnprintf(buf, PAGE_SIZE, "support isc defect checkd\n");
 
 	return 0;
 }
@@ -3424,7 +3424,7 @@ static ssize_t isc_defect_store(struct device *dev,
 static ssize_t spi_if_sel_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	snprintf(buf, PAGE_SIZE, "support spi if sel\n");
+	scnprintf(buf, PAGE_SIZE, "support spi if sel\n");
 
 	return 0;
 }
@@ -3484,7 +3484,7 @@ static ssize_t ccd_state_show(struct device *dev,
 
 	pr_info("%s : %s 0x%02x %d\n",
 		__func__, (retVal == 1) ? "Pass" : "Fail", ccd_state, retVal);
-	snprintf(buf, PAGE_SIZE, "%d\n", retVal);
+	scnprintf(buf, PAGE_SIZE, "%d\n", retVal);
 	return strlen(buf);
 }
 #endif
@@ -3502,7 +3502,7 @@ static ssize_t dynamic_hlpm_show(struct device *dev,
 	}
 	panel_data = &panel->panel_data;
 
-	snprintf(buf, PAGE_SIZE, "%u\n",
+	scnprintf(buf, PAGE_SIZE, "%u\n",
 			panel_data->props.dynamic_hlpm);
 
 	return strlen(buf);
@@ -3561,7 +3561,7 @@ static ssize_t dynamic_freq_show(struct device *dev,
 	}
 	dyn_status = &panel->df_status;
 
-	snprintf(buf, PAGE_SIZE, "[DYN_FREQ] req: %d current: %d\n", dyn_status->request_df, dyn_status->current_df);
+	scnprintf(buf, PAGE_SIZE, "[DYN_FREQ] req: %d current: %d\n", dyn_status->request_df, dyn_status->current_df);
 
 	return strlen(buf);
 }
@@ -3608,7 +3608,7 @@ static ssize_t adap_freq_show(struct device *dev,
 	adap_info = &panel->lcd_info.adaptive_info;
 	adap_idx = &panel->adap_idx;
 
-	snprintf(buf, PAGE_SIZE, "CUR IDX : (freq:%u, ffc:%u), HS : %u, REQ IDX : %u\n",
+	scnprintf(buf, PAGE_SIZE, "CUR IDX : (freq:%u, ffc:%u), HS : %u, REQ IDX : %u\n",
 		adap_idx->cur_freq_idx, panel->panel_data.props.cur_ffc_idx,
 		adap_info->freq_info[adap_idx->cur_freq_idx].hs_clk,
 		adap_idx->req_freq_idx);
@@ -3672,14 +3672,14 @@ static ssize_t spi_flash_ctrl_show(struct device *dev,
 		return -EINVAL;
 	}
 
-	len += snprintf(buf, PAGE_SIZE, "send %d byte(s):\n", spi_flash_writelen);
+	len += scnprintf(buf, PAGE_SIZE, "send %d byte(s):\n", spi_flash_writelen);
 	for (i = 0; i < spi_flash_writelen; i++)
-		len += snprintf(buf + len, PAGE_SIZE - len, "%02X%s", spi_flash_writebuf[i],
+		len += scnprintf(buf + len, PAGE_SIZE - len, "%02X%s", spi_flash_writebuf[i],
 				(((i + 1) % 16) == 0) || (i == spi_flash_writelen - 1) ? "\n" : " ");
 
-	len += snprintf(buf + len, PAGE_SIZE - len, "receive %d byte(s):\n", spi_flash_readlen);
+	len += scnprintf(buf + len, PAGE_SIZE - len, "receive %d byte(s):\n", spi_flash_readlen);
 	for (i = 0; i < spi_flash_readlen; i++)
-		len += snprintf(buf + len, PAGE_SIZE - len, "%02X%s", spi_flash_readbuf[i],
+		len += scnprintf(buf + len, PAGE_SIZE - len, "%02X%s", spi_flash_readbuf[i],
 				(((i + 1) % 16) == 0) || (i == spi_flash_readlen - 1) ? "\n" : " ");
 
 

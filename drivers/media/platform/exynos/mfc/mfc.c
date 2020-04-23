@@ -1065,7 +1065,7 @@ static void __mfc_parse_dt(struct device_node *np, struct mfc_dev *mfc)
 			sizeof(struct mfc_qos) * pdata->max_qos_steps, GFP_KERNEL);
 
 	for (i = 0; i < pdata->max_qos_steps; i++) {
-		snprintf(node_name, sizeof(node_name), "mfc_qos_variant_%d", i);
+		scnprintf(node_name, sizeof(node_name), "mfc_qos_variant_%d", i);
 		__mfc_parse_mfc_qos_platdata(np, node_name, &pdata->qos_table[i]);
 	}
 
@@ -1132,7 +1132,7 @@ static struct video_device *__mfc_video_device_register(struct mfc_dev *dev,
 	vfd->v4l2_dev = &dev->v4l2_dev;
 	vfd->vfl_dir = VFL_DIR_M2M;
 
-	snprintf(vfd->name, sizeof(vfd->name), "%s%d", vfd->name, dev->id);
+	scnprintf(vfd->name, sizeof(vfd->name), "%s%d", vfd->name, dev->id);
 
 	ret = video_register_device(vfd, VFL_TYPE_GRABBER, node_num + 60 * dev->id);
 	if (ret) {
