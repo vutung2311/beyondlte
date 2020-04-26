@@ -23,9 +23,9 @@ GCC_LD="${BUILD_CROSS_COMPILE}ld"
 CLANG_LDLTO=$CLANG_BIN_PATH/ld.lld
 GCC_LDLTO="${BUILD_CROSS_COMPILE}ld.gold"
 
-CC=$GCC_CC
-LD=$GCC_LD
-LDLTO=$GCC_LDLTO
+CC=$CLANG_CC
+LD=$CLANG_LD
+LDLTO=$CLANG_LD
 
 BUILD_JOB_NUMBER="$(nproc)"
 # BUILD_JOB_NUMBER=1
@@ -82,6 +82,8 @@ FUNC_BUILD_KERNEL()
 			-d CONFIG_LTO_NONE \
 			-e CONFIG_LTO_GCC
 			OUTPUT_ZIP="${OUTPUT_ZIP}.lto"
+			CC=$GCC_CC
+			LD=$GCC_LD
 			continue
 		fi
         if [[ "$var" = "--with-supersu" ]] ; then
