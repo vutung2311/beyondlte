@@ -926,7 +926,10 @@ endif
 ifdef CONFIG_LTO_CLANG
 ifdef CONFIG_THINLTO
 lto-clang-flags	:= -flto=thin
-LDFLAGS		+= --thinlto-cache-dir=.thinlto-cache --thinlto-cache-policy=cache_size_bytes=5g:cache_size=0%
+THINLTO_CACHE_DIR := --thinlto-cache-dir=.thinlto-cache
+THINLTO_CACHE_POLICY := --thinlto-cache-policy=cache_size_bytes=5g:cache_size=0%
+LDFLAGS		+= $(THINLTO_CACHE_DIR) $(THINLTO_CACHE_POLICY)
+lto-clang-flags += -Wl$(comma)$(THINLTO_CACHE_DIR) -Wl$(comma)$(THINLTO_CACHE_POLICY)
 else
 lto-clang-flags	:= -flto
 endif
